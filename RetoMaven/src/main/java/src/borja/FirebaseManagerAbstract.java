@@ -1,4 +1,4 @@
-package src.modelo;
+package src.borja;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,14 +7,12 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
-/*
- * Clase de inicialización de Firebase para Firestore.
+/**
+ * Clase abstracta para la gestión de Firebase.
  */
-public class FirebaseInitialize {
+public abstract class FirebaseManagerAbstract {
 
-    // Este método debe llamarse una sola vez al iniciar la app
-    @SuppressWarnings("deprecation")
-	public static void initialize() {
+	protected FirebaseManagerAbstract() {
         if (FirebaseApp.getApps().isEmpty()) {
             try {
                 FileInputStream serviceAccount = new FileInputStream("privateKey.json");
@@ -30,6 +28,5 @@ public class FirebaseInitialize {
                 System.err.println("Error al inicializar Firebase: " + e.getMessage());
             }
         }
-    }
-
+	}
 }

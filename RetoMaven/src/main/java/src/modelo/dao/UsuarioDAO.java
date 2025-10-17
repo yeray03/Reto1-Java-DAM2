@@ -12,7 +12,7 @@ import src.pojos.Usuario;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-
+// Hacer que extienda FirebaseManagerAbstract (así usamos el patrón factory)
 public class UsuarioDAO {
 	private CollectionReference getUsuarios() throws IOException {
 	    Firestore db = (Firestore) FirebaseServices.getDB();

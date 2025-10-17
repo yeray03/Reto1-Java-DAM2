@@ -42,7 +42,7 @@ public class LoginPanel extends JPanel {
 		setLayout(null);
 		setBackground(Color.decode("#232637"));
 
-		logoLabel = new JLabel(new ImageIcon("src/res/Logo01.svg"));
+		logoLabel = new JLabel(new ImageIcon("/src/main/java/src/res/Logo01.svg"));
 		logoLabel.setBounds(140, 15, 100, 50);
 		add(logoLabel);
 
@@ -137,7 +137,7 @@ public class LoginPanel extends JPanel {
 		bg.setOpaque(true); // Make it transparent if needed
 
 		// Add the background image
-		ImageIcon fondo = new ImageIcon("src/res/Background.png");
+		ImageIcon fondo = new ImageIcon("/src/main/java/src/res/Background.png");
 		JLabel fondoLabel = new JLabel(fondo);
 		fondoLabel.setBounds(0, 0, 400, 400); // Replace 400, 400 with the desired width and height
 		add(fondoLabel);
