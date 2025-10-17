@@ -3,7 +3,9 @@ package src.vista;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -13,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 import src.modelo.dao.UsuarioDAO;
 import src.pojos.Usuario;
@@ -85,35 +86,48 @@ public class LoginPanel extends JPanel {
 		// Simulación de bbdd de usuarios
 		usuarios = new HashMap<>();
 		usuarios.put("usuario1@example.com", "clave123");
-		usuarios.put("entrenador@example.com", "pass456");	
+		usuarios.put("entrenador@example.com", "pass456");
 
 		// Evento del botón login
 		loginButton.addActionListener(e -> {
-		    String email = emailField.getText().trim();
-		    String pass = new String(passwordField.getPassword());
+			String email = emailField.getText().trim();
+			String pass = new String(passwordField.getPassword());
 
-		    if (email.isEmpty() || pass.isEmpty()) {
-		        JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Error",
-		                JOptionPane.ERROR_MESSAGE);
-		    } else {
-		        // Aquí, consulta el usuario en la base de datos (DAO)
-		        UsuarioDAO usuarioDAO = new UsuarioDAO();
-		        Usuario usuario = usuarioDAO.buscarUsuarioPorEmail(email);
+			if (email.isEmpty() || pass.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			} else {
+				// Aquí, consulta el usuario en la base de datos (DAO)
+				UsuarioDAO usuarioDAO = new UsuarioDAO();
+				Usuario usuario;
+				try {
+					usuario = usuarioDAO.buscarUsuarioPorEmail(email);
 
-		        if (usuario == null) {
-		            JOptionPane.showMessageDialog(this, "El usuario no existe.", "Error", JOptionPane.ERROR_MESSAGE);
-		        } else if (!usuario.getContrasena().equals(pass)) {
-		            JOptionPane.showMessageDialog(this, "Usuario y/o contraseña incorrectos.", "Error",
-		                    JOptionPane.ERROR_MESSAGE);
-		        } else {
-		            JOptionPane.showMessageDialog(this, "Login correcto. ¡Bienvenido/a!", "Login",
-		                    JOptionPane.INFORMATION_MESSAGE);
-		            // Cambiar de pantalla
-		            if (mainFrame instanceof SpinningCatFrame) {
-		                ((SpinningCatFrame) mainFrame).mostrarPantallaWorkouts();
-		            }
-		        }
-		    }
+					if (usuario == null) {
+						JOptionPane.showMessageDialog(this, "El usuario no existe.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					} else if (!usuario.getContrasena().equals(pass)) {
+						JOptionPane.showMessageDialog(this, "Usuario y/o contraseña incorrectos.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(this, "Login correcto. ¡Bienvenido/a!", "Login",
+								JOptionPane.INFORMATION_MESSAGE);
+						// Cambiar de pantalla
+						if (mainFrame instanceof SpinningCatFrame) {
+							((SpinningCatFrame) mainFrame).mostrarPantallaWorkouts();
+						}
+					}
+				} catch (IOException ex) {
+
+					ex.printStackTrace();
+				} catch (ExecutionException ee) {
+
+					ee.printStackTrace();
+				} catch (InterruptedException ie) {
+
+					ie.printStackTrace();
+				}
+			}
 		});
 
 		// Initialize the bg panel
@@ -137,9 +151,8 @@ public class LoginPanel extends JPanel {
 		add(passwordField);
 		add(forgotLabel);
 		add(loginButton);
-		
-		add(fondoLabel);
-
+		// Rubas: Comento esto que está duplicado
+		// add(fondoLabel);
 
 	}
 

@@ -26,7 +26,8 @@ public class UsuarioDAO {
         Firestore db = FirebaseServices.getFirestore();
         db.collection("usuarios").document(usuario.getEmail()).set(usuario);
     }
-
+    
+    //Esto solo funciona si el email es el nombre del documento
     public Usuario buscarUsuarioPorEmail(String email) throws IOException, ExecutionException, InterruptedException {
         DocumentSnapshot snapshot = getUsuarios().document(email).get().get();
         if (snapshot.exists()) {
