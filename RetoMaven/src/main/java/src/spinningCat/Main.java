@@ -1,10 +1,14 @@
 package src.spinningCat;
 
 import javax.swing.JFrame;
+
+import src.modelo.FirebaseInitialize;
 import src.vista.LoginPanel;
 
 public class Main {
     public static void main(String[] args) {
+       // FirebaseInitialize.initialize();
+
         javax.swing.SwingUtilities.invokeLater(() -> {       	
         	//new LoginPanel(null);      	
             JFrame frame = new JFrame("Login");

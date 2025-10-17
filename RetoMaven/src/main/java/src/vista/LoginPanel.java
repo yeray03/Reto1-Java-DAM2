@@ -41,16 +41,17 @@ public class LoginPanel extends JPanel {
 
 		setLayout(null);
 		setBackground(Color.decode("#232637"));
-
+		// Logito 
 		logoLabel = new JLabel(new ImageIcon("/src/main/java/src/res/Logo01.svg"));
 		logoLabel.setBounds(140, 15, 100, 50);
 		add(logoLabel);
-
+		// Etiqueta de título
 		titleLabel = new JLabel("<html><b>Log in to your SpinningCat<br>account</b></html>");
 		titleLabel.setForeground(Color.WHITE);
 		titleLabel.setFont(new Font("Roboto", Font.BOLD, 20));
 		titleLabel.setBounds(35, 30, 300, 60);
-
+		
+		// Campos de texto
 		emailField = new JTextField();
 		emailField.setFont(new Font("Arial", Font.PLAIN, 16));
 		emailField.setBounds(35, 120, 300, 35);
@@ -59,7 +60,8 @@ public class LoginPanel extends JPanel {
 		emailField.setCaretColor(Color.WHITE);
 		emailField.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Email", 0, 0, null,
 				new Color(180, 180, 180)));
-
+		
+		// Campo de contraseña
 		passwordField = new JPasswordField();
 		passwordField.setFont(new Font("Arial", Font.PLAIN, 16));
 		passwordField.setBounds(35, 170, 300, 35);
@@ -69,11 +71,15 @@ public class LoginPanel extends JPanel {
 		passwordField.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Password", 0, 0,
 				null, new Color(180, 180, 180)));
 
+		// Etiqueta de "Olvidé mi contraseña"
 		forgotLabel = new JLabel("Forgot password?");
 		forgotLabel.setForeground(new Color(180, 180, 180));
 		forgotLabel.setFont(new Font("Arial", Font.BOLD, 13));
 		forgotLabel.setBounds(200, 210, 140, 20);
+		
+		
 
+		// Botón de login
 		loginButton = new JButton("Log in");
 		loginButton.setBounds(35, 270, 300, 45);
 		loginButton.setFont(new Font("Arial", Font.BOLD, 18));
@@ -84,9 +90,9 @@ public class LoginPanel extends JPanel {
 		loginButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
 		// Simulación de bbdd de usuarios
-		usuarios = new HashMap<>();
-		usuarios.put("usuario1@example.com", "clave123");
-		usuarios.put("entrenador@example.com", "pass456");
+//		usuarios = new HashMap<>();
+//		usuarios.put("usuario1@example.com", "clave123");
+//		usuarios.put("entrenador@example.com", "pass456");
 
 		// Evento del botón login
 		loginButton.addActionListener(e -> {
@@ -136,7 +142,7 @@ public class LoginPanel extends JPanel {
 		bg.setBounds(0, 0, 400, 400); // Adjust the size as needed
 		bg.setOpaque(true); // Make it transparent if needed
 
-		// Add the background image
+		// Imagen de fondo
 		ImageIcon fondo = new ImageIcon("/src/main/java/src/res/Background.png");
 		JLabel fondoLabel = new JLabel(fondo);
 		fondoLabel.setBounds(0, 0, 400, 400); // Replace 400, 400 with the desired width and height
