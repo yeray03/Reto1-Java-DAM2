@@ -27,7 +27,7 @@ public class FirebaseServices {
 	
 	
 
-	// Aquí podrías añadir métodos para otros servicios: Storage, Auth, etc.
+	// Se puede añadir métodos para otros servicios: Storage, Auth, etc.
 	
 	
 }

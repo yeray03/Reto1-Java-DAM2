@@ -14,20 +14,20 @@ import java.util.concurrent.ExecutionException;
 
 
 public class UsuarioDAO {
-    private CollectionReference getUsuarios() throws IOException {
-        return FirebaseServices.getDB().collection("usuarios");
-    }
-
-//    public void registrarUsuario(Usuario usuario) throws IOException {
-//        getUsuarios().document(usuario.getEmail()).set(usuario);
-//    }
-    
+	private CollectionReference getUsuarios() throws IOException {
+	    Firestore db = (Firestore) FirebaseServices.getDB();
+	    if (db == null) {
+	        throw new IOException("Firestore is not initialized.");
+	    }
+	    return db.collection("usuarios");
+	}
+ 
     public void registrarUsuario(Usuario usuario) throws Exception {
         Firestore db = FirebaseServices.getFirestore();
         db.collection("usuarios").document(usuario.getEmail()).set(usuario);
     }
     
-    //Esto solo funciona si el email es el nombre del documento
+    // Esto solo funciona si el email es el nombre del documento en firebase
     public Usuario buscarUsuarioPorEmail(String email) throws IOException, ExecutionException, InterruptedException {
         DocumentSnapshot snapshot = getUsuarios().document(email).get().get();
         if (snapshot.exists()) {
@@ -36,7 +36,7 @@ public class UsuarioDAO {
         return null;
     }
     
-   
+   // Guarda usuario en Realtime Database
     public void guardarUsuario(Usuario usuario) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuarios");
         ref.child(usuario.getEmail()).setValueAsync(usuario);
