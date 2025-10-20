@@ -58,7 +58,7 @@ public abstract class FirebaseInitialize {
 
 /*
  * 
- * Primera versión de la clase FirebaseInitialize
+ * Primera versión de la clase FirebaseInitialize:
  * 
  * Clase de inicialización de Firebase para Firestore.
  */

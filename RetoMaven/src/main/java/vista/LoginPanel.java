@@ -29,6 +29,8 @@ public class LoginPanel extends JPanel {
 	private JTextField emailField;
 	private JPasswordField passwordField;
 	private JButton loginButton;
+	private JButton registerButton;
+
 	private JLabel forgotLabel;
 	private JLabel logoLabel;
 	private HashMap<String, String> usuarios;
@@ -93,6 +95,22 @@ public class LoginPanel extends JPanel {
 		loginButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		add(loginButton);
 		
+		
+		// Botón de registro	
+		registerButton = new JButton("Register");
+		registerButton.setBounds(35, 320, 300, 40); // Y aquí lo añades
+		registerButton.setFont(new Font("Arial", Font.BOLD, 16));
+		registerButton.setForeground(Color.WHITE);
+		registerButton.setBackground(new Color(100, 100, 100));
+		registerButton.setBorderPainted(false);
+		registerButton.setFocusPainted(false);
+		registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		add(registerButton);
+		registerButton.addActionListener(e -> {
+		    mainFrame.setContentPane(new RegistroPanel(mainFrame));
+		    mainFrame.validate();	    
+		});
+		
 		if (mainFrame instanceof JFrame) {
 			((JFrame) mainFrame).getRootPane().setDefaultButton(loginButton);
 		}
@@ -117,7 +135,7 @@ public class LoginPanel extends JPanel {
 				JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
-				// Aquí, consulta el usuario en la base de datos (DAO)
+				// Aquí, consulta el usuario en la base de datos
 				UsuarioDAO usuarioDAO = new UsuarioDAO();
 				Usuario usuario;
 				try {

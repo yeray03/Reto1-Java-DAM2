@@ -16,7 +16,7 @@ import pojos.Usuario;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-// Hacer que extienda FirebaseManagerAbstract (así usamos el patrón factory)
+// Hacer que extienda FirebaseInitialize (así usamos el patrón factory)
 public class UsuarioDAO extends FirebaseInitialize {
 
 	public UsuarioDAO() {
@@ -34,7 +34,7 @@ public class UsuarioDAO extends FirebaseInitialize {
 	// REGISTRO USUARIO
 	public void registrarUsuario(Usuario usuario) throws Exception {
 		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
-		db.collection("usuarios").document(usuario.getEmail()).set(usuario);
+		db.collection("usuarios").document(usuario.getEmail()).set(usuario); // crea el documento en usuarios y usa el email como ID
 	}
 
 	// LOGIN USUARIO
