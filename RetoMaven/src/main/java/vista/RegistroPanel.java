@@ -1,6 +1,7 @@
 package vista;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,110 +20,115 @@ import controlador.RegistroControlador;
 import pojos.Usuario;
 
 public class RegistroPanel extends JPanel {
-    private static final long serialVersionUID = 1L;
-    private JTextField nameField, surnameField, emailField;
-    private JPasswordField passwordField, repeatPasswordField;
-    private JTextField birthDateField;
-    private JComboBox<String> tipoUsuarioCombo;
-    private JButton registerButton, backButton;
-    private JLabel mensajeLabel;
-    private JFrame parentFrame;
+	private static final long serialVersionUID = 1L;
+	private JTextField nameField, surnameField, emailField;
+	private JPasswordField passwordField, repeatPasswordField;
+	private JTextField birthDateField;
+	private JComboBox<String> tipoUsuarioCombo;
+	private JButton registerButton, backButton;
+	private JLabel mensajeLabel;
 
-    public RegistroPanel(JFrame parentFrame) {
-    	this.parentFrame = parentFrame;
-        setLayout(new GridLayout(9, 2, 10, 10));
-        setBackground(new Color(24, 25, 32)); 
+	public RegistroPanel(JFrame frame) {
+		setLayout(new GridLayout(9, 2, 10, 10));
+		setBackground(new Color(32, 32, 32));
+		
+		// Inicializar componentes
+		nameField = new JTextField();
+		surnameField = new JTextField();
+		emailField = new JTextField();
+		passwordField = new JPasswordField();
+		repeatPasswordField = new JPasswordField();
+		birthDateField = new JTextField("YYYY-MM-DD");
+		tipoUsuarioCombo = new JComboBox<>(new String[] { "Cliente", "Entrenador" });
+		registerButton = new JButton("Registrar");
+		backButton = new JButton("Volver");
+		mensajeLabel = new JLabel("");
+		mensajeLabel.setForeground(Color.RED);
 
-        // Inicializar componentes
-        nameField = new JTextField();
-        surnameField = new JTextField();
-        emailField = new JTextField();
-        passwordField = new JPasswordField();
-        repeatPasswordField = new JPasswordField();
-        birthDateField = new JTextField("YYYY-MM-DD");
-        tipoUsuarioCombo = new JComboBox<>(new String[] { "Cliente", "Entrenador" });
-        registerButton = new JButton("Registrar");
-        backButton = new JButton("Volver");
-        mensajeLabel = new JLabel("");
-        mensajeLabel.setForeground(Color.RED);
+		// Etiquetas
+		add(new JLabel("Nombre:"));
+		add(nameField);
+		add(new JLabel("Apellidos:"));
+		add(surnameField);
+		add(new JLabel("Email:"));
+		add(emailField);
+		add(new JLabel("Contraseña:"));
+		add(passwordField);
+		add(new JLabel("Repetir Contraseña:"));
+		add(repeatPasswordField);
+		add(new JLabel("Fecha de nacimiento:"));
+		add(birthDateField);
+		add(new JLabel("Tipo de usuario:"));
+		add(tipoUsuarioCombo);
 
-        // Etiquetas
-        add(new JLabel("Nombre:"));
-        add(nameField);
-        add(new JLabel("Apellidos:"));
-        add(surnameField);
-        add(new JLabel("Email:"));
-        add(emailField);
-        add(new JLabel("Contraseña:"));
-        add(passwordField);
-        add(new JLabel("Repetir Contraseña:"));
-        add(repeatPasswordField);
-        add(new JLabel("Fecha de nacimiento:"));
-        add(birthDateField);
-        add(new JLabel("Tipo de usuario:"));
-        add(tipoUsuarioCombo);
+		add(registerButton);
+		add(backButton);
+		add(mensajeLabel);
 
-        add(registerButton);
-        add(backButton);
-        add(mensajeLabel);
+		for (Component c : getComponents()) {
+			if (c instanceof JLabel) {
+				c.setForeground(new Color(220, 220, 220));
+			}
+		}
 
-        // Acción botón registro
-        registerButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String nombre = nameField.getText().trim();
-                String apellidos = surnameField.getText().trim();
-                String email = emailField.getText().trim();
-                String contrasena = new String(passwordField.getPassword());
-                String repPass = new String(repeatPasswordField.getPassword());
-                String fechaNacimiento = birthDateField.getText().trim();
-                String tipoUsuarioStr = (String) tipoUsuarioCombo.getSelectedItem();
-                int tipoUsuario = tipoUsuarioStr.equals("Entrenador") ? 1 : 0;
+		// Acción botón registro
+		registerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String nombre = nameField.getText().trim();
+				String apellidos = surnameField.getText().trim();
+				String email = emailField.getText().trim();
+				String contrasena = new String(passwordField.getPassword());
+				String repPass = new String(repeatPasswordField.getPassword());
+				String fechaNacimiento = birthDateField.getText().trim();
+				String tipoUsuarioStr = (String) tipoUsuarioCombo.getSelectedItem();
+				int tipoUsuario = tipoUsuarioStr.equals("Entrenador") ? 1 : 0; // 1=Entrenador, 0=Cliente
 
-                if (!contrasena.equals(repPass)) {
-                    mensajeLabel.setForeground(Color.RED);
-                    mensajeLabel.setText("Las contraseñas no coinciden.");
-                    return;
-                }
-                if (!isValidDate(fechaNacimiento)) {
-                    mensajeLabel.setForeground(Color.RED);
-                    mensajeLabel.setText("Fecha de nacimiento no válida (YYYY-MM-DD).");
-                    return;
-                }
+				if (!contrasena.equals(repPass)) {
+					mensajeLabel.setForeground(Color.RED);
+					mensajeLabel.setText("Las contraseñas no coinciden.");
+					return;
+				}
+				if (!isValidDate(fechaNacimiento)) {
+					mensajeLabel.setForeground(Color.RED);
+					mensajeLabel.setText("Fecha de nacimiento no válida (YYYY-MM-DD).");
+					return;
+				}
 
-                Usuario usuario = new Usuario();
-                usuario.setNombre(nombre);
-                usuario.setApellidos(apellidos);
-                usuario.setEmail(email);
-                usuario.setContrasena(contrasena);
-                usuario.setFechaNacimiento(fechaNacimiento);
-                usuario.setTipoUsuario(tipoUsuario);
+				Usuario usuario = new Usuario();
+				usuario.setNombre(nombre);
+				usuario.setApellidos(apellidos);
+				usuario.setEmail(email);
+				usuario.setContrasena(contrasena);
+				usuario.setFechaNacimiento(fechaNacimiento);
+				usuario.setTipoUsuario(tipoUsuario);
+				usuario.setHistorico("");
+				RegistroControlador controlador = new RegistroControlador();
+				String resultado = controlador.registrarUsuario(usuario);
+				mensajeLabel.setText(resultado);
+				if (resultado.equals("Usuario registrado correctamente.")) {
+					mensajeLabel.setForeground(new Color(0, 200, 0));
+				} else {
+					mensajeLabel.setForeground(Color.RED);
+				}
+			}
+		});
 
-                RegistroControlador controlador = new RegistroControlador();
-                String resultado = controlador.registrarUsuario(usuario);
-                mensajeLabel.setText(resultado);
-                if (resultado.equals("Usuario registrado correctamente.")) {
-                    mensajeLabel.setForeground(new Color(0, 200, 0));
-                } else {
-                    mensajeLabel.setForeground(Color.RED);
-                }
-            }
-        });
+		// Acción botón volver
+		backButton.addActionListener(e -> {
+			frame.setContentPane(new LoginPanel(frame));
+			frame.validate(); // O lo que toque para volver al login
+		});
+	}
 
-        // Acción botón volver
-        backButton.addActionListener(e -> {
-            parentFrame.dispose(); // O lo que toque para volver al login
-        });
-    }
-
-    // Validar formato de fecha, importamos librería Date de java.util
-    private boolean isValidDate(String dateStr) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            sdf.setLenient(false);
-            Date fecha = sdf.parse(dateStr);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+	// Validar formato de fecha, importamos librería Date de java.util
+	private boolean isValidDate(String dateStr) {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			sdf.setLenient(false);
+			Date fecha = sdf.parse(dateStr);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }

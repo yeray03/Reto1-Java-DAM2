@@ -19,15 +19,7 @@ public class SpinningCatFrame extends JFrame {
         loginPanel = new LoginPanel(this); // Le pasamos la referencia
         setContentPane(loginPanel);
         setVisible(true);
-    }
-
-    public void mostrarPantallaWorkouts() {
-        if (workoutsPanel == null) {
-            workoutsPanel = new WorkoutsPanel();
-        }
-        setContentPane(workoutsPanel);
-        revalidate();
-        repaint();
+        setResizable(false);
     }
 
     public static void main(String[] args) {
@@ -35,4 +27,6 @@ public class SpinningCatFrame extends JFrame {
             new SpinningCatFrame();
         });
     }
+    
+    
 }

@@ -18,6 +18,7 @@ public class Main {
             frame.setContentPane(new LoginPanel(frame));
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
+            frame.setResizable(false);
         });
     }
 }

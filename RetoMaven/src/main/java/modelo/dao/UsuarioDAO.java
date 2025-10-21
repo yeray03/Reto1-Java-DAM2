@@ -1,7 +1,6 @@
 package modelo.dao;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
@@ -21,14 +20,6 @@ public class UsuarioDAO extends FirebaseInitialize {
 
 	public UsuarioDAO() {
 		super();
-	}
-
-	private CollectionReference getUsuarios() throws IOException {
-		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
-		if (db == null) {
-			throw new IOException("Firestore is not initialized.");
-		}
-		return db.collection("usuarios");
 	}
 
 	// REGISTRO USUARIO

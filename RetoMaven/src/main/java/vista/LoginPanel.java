@@ -3,7 +3,6 @@ package vista;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
-import java.awt.Frame;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
@@ -34,11 +33,9 @@ public class LoginPanel extends JPanel {
 	private JLabel forgotLabel;
 	private JLabel logoLabel;
 	private HashMap<String, String> usuarios;
-	private JFrame mainFrame; // Referencia al JFrame principal
 
-	public LoginPanel(JFrame mainFrame) {
-		this.mainFrame = mainFrame; // Guarda la referencia para poder hacer el cambio de panel
-
+	public LoginPanel(JFrame frame) {
+		
 		setLayout(null);
 		setBackground(Color.decode("#232637"));
 
@@ -76,14 +73,6 @@ public class LoginPanel extends JPanel {
 				null, new Color(180, 180, 180)));
 		add(passwordField);
 
-		// Etiqueta de "Olvidé mi contraseña"
-		forgotLabel = new JLabel("Forgot password?");
-		forgotLabel.setForeground(new Color(180, 180, 180));
-		forgotLabel.setFont(new Font("Arial", Font.BOLD, 13));
-		forgotLabel.setBounds(200, 210, 140, 20);
-		forgotLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		add(forgotLabel);
-
 		// Botón de login
 		loginButton = new JButton("Log in");
 		loginButton.setBounds(35, 270, 300, 45);
@@ -94,11 +83,10 @@ public class LoginPanel extends JPanel {
 		loginButton.setFocusPainted(false);
 		loginButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		add(loginButton);
-		
-		
-		// Botón de registro	
+
+		// Botón de registro
 		registerButton = new JButton("Register");
-		registerButton.setBounds(35, 320, 300, 40); // Y aquí lo añades
+		registerButton.setBounds(35, 320, 300, 40);
 		registerButton.setFont(new Font("Arial", Font.BOLD, 16));
 		registerButton.setForeground(Color.WHITE);
 		registerButton.setBackground(new Color(100, 100, 100));
@@ -107,24 +95,18 @@ public class LoginPanel extends JPanel {
 		registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		add(registerButton);
 		registerButton.addActionListener(e -> {
-		    mainFrame.setContentPane(new RegistroPanel(mainFrame));
-		    mainFrame.validate();	    
+			frame.setContentPane(new RegistroPanel(frame));
+			frame.validate();
 		});
-		
-		if (mainFrame instanceof JFrame) {
-			((JFrame) mainFrame).getRootPane().setDefaultButton(loginButton);
-		}
 
+		// Hacer que el botón login sea el predeterminado al pulsar Enter
+		
+		frame.getRootPane().setDefaultButton(loginButton);
 		// Imagen de fondo (está en /resources)
 		ImageIcon fondo = new ImageIcon(getClass().getResource("/BackgroundLogin.png"));
 		JLabel fondoLabel = new JLabel(fondo);
-		fondoLabel.setBounds(0, 0, 400, 400); // Replace 400, 400 with the desired width and height
+		fondoLabel.setBounds(0, 0, 400, 400);
 		add(fondoLabel);
-
-		// Simulación de bbdd de usuarios
-//		usuarios = new HashMap<>();
-//		usuarios.put("usuario1@example.com", "clave123");
-//		usuarios.put("entrenador@example.com", "pass456");
 
 		// Evento del botón login
 		loginButton.addActionListener(e -> {
@@ -148,12 +130,10 @@ public class LoginPanel extends JPanel {
 						JOptionPane.showMessageDialog(this, "Usuario y/o contraseña incorrectos.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					} else {
-						JOptionPane.showMessageDialog(this, "Login correcto. ¡Bienvenido/a!", "Login",
-								JOptionPane.INFORMATION_MESSAGE);
+
 						// Cambiar de pantalla
-						if (mainFrame instanceof SpinningCatFrame) {
-							((SpinningCatFrame) mainFrame).mostrarPantallaWorkouts();
-						}
+						frame.setContentPane(new WorkoutsPanel(frame,usuario));
+						frame.validate();
 					}
 				} catch (IOException ex) {
 

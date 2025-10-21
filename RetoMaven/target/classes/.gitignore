@@ -1,7 +1,6 @@
 /META-INF/
-/borja/
-/controlador/
-/modelo/
-/pojos/
-/spinningCat/
 /vista/
+/spinningCat/
+/controlador/
+/pojos/
+/modelo/
