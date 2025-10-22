@@ -134,7 +134,7 @@ public class WorkoutsPanel extends JPanel {
 
 					if (opcion == JOptionPane.YES_OPTION) {
 						// INICIAR EJERCICIO
-						frame.setContentPane(new EjercicioPanel(frame, usuario, workoutSelect));
+						frame.setContentPane(new EjercicioPanel(frame, usuario, workoutSelect, ejercicios.get(0)));
 						frame.validate();
 
 					}
