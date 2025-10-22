@@ -3,17 +3,18 @@ package pojos;
 import java.util.ArrayList;
 
 public class Workout {
-	private ArrayList<String> ejercicios;
+	private ArrayList<Ejercicio> ejercicios;
 	private String nombre;
 	private int nivel;
 	private int numEjercicios;
 	private String videoUrl;
-
-	public ArrayList<String> getEjercicios() {
+	
+	
+	public ArrayList<Ejercicio> getEjercicios() {
 		return ejercicios;
 	}
 
-	public void setEjercicios(ArrayList<String> ejercicios) {
+	public void setEjercicios(ArrayList<Ejercicio> ejercicios) {
 		this.ejercicios = ejercicios;
 	}
 

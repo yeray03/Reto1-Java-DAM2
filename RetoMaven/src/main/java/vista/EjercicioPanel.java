@@ -13,6 +13,8 @@ import javax.swing.border.TitledBorder;
 
 import pojos.Usuario;
 import pojos.Workout;
+import pojos.Ejercicio;
+import controlador.EjercicioControlador;
 
 public class EjercicioPanel extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -36,7 +38,7 @@ public class EjercicioPanel extends JPanel {
         add(lblCronometro);
 
         // Ejercicio
-        lblEjercicio = new JLabel("Ejercicio:");
+        lblEjercicio = new JLabel("Ejercicio: " + workout.getEjercicios().get(0).getNombre());
         lblEjercicio.setForeground(Color.WHITE);
         lblEjercicio.setBounds(250, 20, 250, 25);
         add(lblEjercicio);
