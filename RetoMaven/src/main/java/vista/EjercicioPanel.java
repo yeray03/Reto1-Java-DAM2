@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
-import pojos.Ejercicio;
 import pojos.Usuario;
 import pojos.Workout;
 
