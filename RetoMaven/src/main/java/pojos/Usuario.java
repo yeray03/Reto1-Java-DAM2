@@ -3,7 +3,6 @@ package pojos;
 import java.util.Objects;
 
 public class Usuario {
-<<<<<<< HEAD
 	private String apellidos;
 	private String contrasena;
 	private String email;
@@ -11,7 +10,6 @@ public class Usuario {
 	private int nivel;
 	private String nombre;
 	private int tipoUsuario;
-=======
 	private String apellidos = "";
 	private String contrasena = "";
 	private String email = "";
@@ -19,18 +17,6 @@ public class Usuario {
 	private int nivel = 0;
 	private String nombre = "";
 	private int tipoUsuario = 0;
->>>>>>> a3d384751dbe27c511ff5a684966942adf10c53c
-
-	public Usuario() {
-	}
-	
-	public Usuario(String email, String nombre, String apellidos, String contrasena, String fechaNacimiento) {
-		this.email = email;
-		this.nombre = nombre;
-		this.apellidos = apellidos;
-		this.contrasena = contrasena;
-		this.fechaNacimiento = fechaNacimiento;
-	}
 
 	public Usuario(String email, String nombre, String contrasena, String fechaNacimiento) {
 		this.email = email;

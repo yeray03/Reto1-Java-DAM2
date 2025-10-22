@@ -46,7 +46,6 @@ public class UsuarioDAO extends FirebaseInitialize {
 		}
 		return null;
 	}
-<<<<<<< HEAD
 
 	public void guardarUsuario(Usuario usuario) {
 		DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuarios");
@@ -64,6 +63,4 @@ public class UsuarioDAO extends FirebaseInitialize {
 		
 	}
 }
-=======
-}
->>>>>>> a3d384751dbe27c511ff5a684966942adf10c53c
+
