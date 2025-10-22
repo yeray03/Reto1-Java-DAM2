@@ -27,7 +27,7 @@ public class EjercicioPanel extends JPanel {
     private JButton btnFoto1, btnFoto2, btnFoto3;
     private JButton btnGreen, btnSalir;
     
-    public EjercicioPanel(JFrame frame, Usuario usuario, Workout workout) {
+    public EjercicioPanel(JFrame frame, Usuario usuario, Workout workout, Ejercicio ejercicio) {
     	setLayout(null);
         setBackground(Color.decode("#232637"));
 
@@ -38,7 +38,8 @@ public class EjercicioPanel extends JPanel {
         add(lblCronometro);
 
         // Ejercicio
-        lblEjercicio = new JLabel("Ejercicio: " + workout.getEjercicios().get(0).getNombre());
+        String nombreEj = (ejercicio != null && ejercicio.getNombre() != null) ? ejercicio.getNombre() : "Desconocido";
+        lblEjercicio = new JLabel("Ejercicio: " );
         lblEjercicio.setForeground(Color.WHITE);
         lblEjercicio.setBounds(250, 20, 250, 25);
         add(lblEjercicio);
