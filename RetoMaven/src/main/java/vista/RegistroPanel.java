@@ -5,13 +5,15 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -26,24 +28,32 @@ public class RegistroPanel extends JPanel {
 	private JTextField birthDateField;
 	private JComboBox<String> tipoUsuarioCombo;
 	private JButton registerButton, backButton;
-	private JLabel mensajeLabel;
+	private boolean placeholder = true;
 
 	public RegistroPanel(JFrame frame) {
 		setLayout(new GridLayout(9, 2, 10, 10));
 		setBackground(new Color(32, 32, 32));
-		
 		// Inicializar componentes
 		nameField = new JTextField();
 		surnameField = new JTextField();
 		emailField = new JTextField();
 		passwordField = new JPasswordField();
 		repeatPasswordField = new JPasswordField();
+
 		birthDateField = new JTextField("YYYY-MM-DD");
+		birthDateField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (placeholder) {
+					birthDateField.setText("");
+					placeholder = false;
+				}
+			}
+
+		});
 		tipoUsuarioCombo = new JComboBox<>(new String[] { "Cliente", "Entrenador" });
 		registerButton = new JButton("Registrar");
 		backButton = new JButton("Volver");
-		mensajeLabel = new JLabel("");
-		mensajeLabel.setForeground(Color.RED);
 
 		// Etiquetas
 		add(new JLabel("Nombre:"));
@@ -63,7 +73,6 @@ public class RegistroPanel extends JPanel {
 
 		add(registerButton);
 		add(backButton);
-		add(mensajeLabel);
 
 		for (Component c : getComponents()) {
 			if (c instanceof JLabel) {
@@ -84,14 +93,12 @@ public class RegistroPanel extends JPanel {
 				int tipoUsuario = tipoUsuarioStr.equals("Entrenador") ? 1 : 0; // 1=Entrenador, 0=Cliente
 
 				if (!contrasena.equals(repPass)) {
-					mensajeLabel.setForeground(Color.RED);
-					mensajeLabel.setText("Las contraseñas no coinciden.");
-					return;
+					JOptionPane.showMessageDialog(frame, "Las contraseñas no coinciden.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 				if (!isValidDate(fechaNacimiento)) {
-					mensajeLabel.setForeground(Color.RED);
-					mensajeLabel.setText("Fecha de nacimiento no válida (YYYY-MM-DD).");
-					return;
+					JOptionPane.showMessageDialog(frame, "Formato de fecha inválido. Use YYYY-MM-DD.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 
 				Usuario usuario = new Usuario();
@@ -101,15 +108,13 @@ public class RegistroPanel extends JPanel {
 				usuario.setContrasena(contrasena);
 				usuario.setFechaNacimiento(fechaNacimiento);
 				usuario.setTipoUsuario(tipoUsuario);
-				usuario.setNivel(0);
-//				usuario.setHistorico("");
-				RegistroControlador controlador = new RegistroControlador();
+				RegistroControlador controlador = RegistroControlador.getInstance();
 				String resultado = controlador.registrarUsuario(usuario);
-				mensajeLabel.setText(resultado);
 				if (resultado.equals("Usuario registrado correctamente.")) {
-					mensajeLabel.setForeground(new Color(0, 200, 0));
+					JOptionPane.showMessageDialog(frame, resultado, "Éxito", JOptionPane.INFORMATION_MESSAGE);
+					frame.setContentPane(new LoginPanel(frame));
 				} else {
-					mensajeLabel.setForeground(Color.RED);
+					JOptionPane.showMessageDialog(frame, resultado, "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -126,7 +131,7 @@ public class RegistroPanel extends JPanel {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			sdf.setLenient(false);
-			Date fecha = sdf.parse(dateStr);
+			sdf.parse(dateStr);
 			return true;
 		} catch (Exception e) {
 			return false;

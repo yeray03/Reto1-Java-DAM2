@@ -4,9 +4,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,10 +13,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
-import modelo.dao.UsuarioDAO;
+import controlador.LoginControlador;
 import pojos.Usuario;
-
 import javax.swing.ImageIcon;
 
 public class LoginPanel extends JPanel {
@@ -30,12 +26,10 @@ public class LoginPanel extends JPanel {
 	private JButton loginButton;
 	private JButton registerButton;
 
-	private JLabel forgotLabel;
 	private JLabel logoLabel;
-	private HashMap<String, String> usuarios;
 
 	public LoginPanel(JFrame frame) {
-		
+
 		setLayout(null);
 		setBackground(Color.decode("#232637"));
 
@@ -99,9 +93,9 @@ public class LoginPanel extends JPanel {
 			frame.validate();
 		});
 
-		// Hacer que el botón login sea el predeterminado al pulsar Enter		
+		// Hacer que el botón login sea el predeterminado al pulsar Enter
 		frame.getRootPane().setDefaultButton(loginButton);
-		
+
 		// Imagen de fondo (está en /resources)
 		ImageIcon fondo = new ImageIcon(getClass().getResource("/BackgroundLogin.png"));
 		JLabel fondoLabel = new JLabel(fondo);
@@ -117,11 +111,11 @@ public class LoginPanel extends JPanel {
 				JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
-				// Aquí, consulta el usuario en la base de datos
-				UsuarioDAO usuarioDAO = new UsuarioDAO();
-				Usuario usuario;
 				try {
-					usuario = usuarioDAO.buscarUsuarioPorEmail(email);
+
+					LoginControlador controlador = LoginControlador.getInstance();
+
+					Usuario usuario = controlador.login(email, pass);
 
 					if (usuario == null) {
 						JOptionPane.showMessageDialog(this, "El usuario no existe.", "Error",
@@ -131,10 +125,10 @@ public class LoginPanel extends JPanel {
 								JOptionPane.ERROR_MESSAGE);
 					} else {
 
-						JOptionPane.showMessageDialog(this, "Login correcto. ¡Bienvenido/a " + usuario.getNombre(), "Login",
-								JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(this, "Login correcto. ¡Bienvenido/a " + usuario.getNombre(),
+								"Login", JOptionPane.INFORMATION_MESSAGE);
 						// Cambiar de pantalla
-						frame.setContentPane(new WorkoutsPanel(frame,usuario));
+						frame.setContentPane(new WorkoutsPanel(frame, usuario));
 						frame.validate();
 					}
 				} catch (IOException ex) {
