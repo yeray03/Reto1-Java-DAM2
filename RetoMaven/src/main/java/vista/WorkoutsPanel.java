@@ -35,8 +35,7 @@ public class WorkoutsPanel extends JPanel {
 	public WorkoutsPanel(JFrame frame, Usuario usuario) {
 		this.usuario = usuario;
 
-		JOptionPane.showMessageDialog(this, "Login correcto. ¡Bienvenido/a " + usuario.getNombre(), "Login",
-				JOptionPane.INFORMATION_MESSAGE);
+		
 		setLayout(null);
 		frame.setSize(648, 493);
 		frame.setLocationRelativeTo(null);

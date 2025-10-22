@@ -1,17 +1,18 @@
-package vista;
+package spinningCat;
+
 
 import javax.swing.*;
+import vista.LoginPanel;
 
-public class SpinningCatFrame extends JFrame {
+public class SpinningCat extends JFrame {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private LoginPanel loginPanel;
-    private WorkoutsPanel workoutsPanel;
 
-    public SpinningCatFrame() {
-        setTitle("SpinningCat - App");
+    public SpinningCat() {
+        setTitle("SpinningCat");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 400);
         setLocationRelativeTo(null);
@@ -24,7 +25,7 @@ public class SpinningCatFrame extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new SpinningCatFrame();
+            new SpinningCat();
         });
     }
     

@@ -131,6 +131,8 @@ public class LoginPanel extends JPanel {
 								JOptionPane.ERROR_MESSAGE);
 					} else {
 
+						JOptionPane.showMessageDialog(this, "Login correcto. ¡Bienvenido/a " + usuario.getNombre(), "Login",
+								JOptionPane.INFORMATION_MESSAGE);
 						// Cambiar de pantalla
 						frame.setContentPane(new WorkoutsPanel(frame,usuario));
 						frame.validate();
