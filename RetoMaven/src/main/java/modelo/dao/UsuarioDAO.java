@@ -6,8 +6,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import modelo.FirebaseInitialize;
 import pojos.Usuario;
@@ -15,38 +13,37 @@ import pojos.Usuario;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-// Hacer que extienda FirebaseInitialize (así usamos el patrón factory)
 public class UsuarioDAO extends FirebaseInitialize {
 
 	public UsuarioDAO() {
 		super();
 	}
 
-	// REGISTRO USUARIO
 	public void registrarUsuario(Usuario usuario) throws Exception {
 		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
-		db.collection("usuarios").document(usuario.getEmail()).set(usuario); // crea el documento en usuarios y usa el email como ID
+
+		if (usuario.getNivel() < 0 || usuario.getNivel() > 5) {
+			usuario.setNivel(0);
+		}
+
+		String emailNormalizado = usuario.getEmail().toLowerCase().trim();
+		usuario.setEmail(emailNormalizado);
+
+		db.collection("usuarios").document(emailNormalizado).set(usuario);
 	}
 
-	
-	// LOGIN USUARIO
 	public Usuario buscarUsuarioPorEmail(String email) throws IOException, ExecutionException, InterruptedException {
-		
 		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
-		
-		ApiFuture<QuerySnapshot> snapshot = db.collection("usuarios").whereEqualTo("email", email).get();	
+
+		String emailNormalizado = email.toLowerCase().trim();
+
+		ApiFuture<QuerySnapshot> snapshot = db.collection("usuarios").whereEqualTo("email", emailNormalizado).get();
 		QuerySnapshot querySnapshot = snapshot.get();
-		
+
 		if (!querySnapshot.isEmpty()) {
 			DocumentSnapshot documento = querySnapshot.getDocuments().get(0);
 			return documento.toObject(Usuario.class);
 		}
 		return null;
-	}
-
-	public void guardarUsuario(Usuario usuario) {
-		DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuarios");
-		ref.child(usuario.getEmail()).setValueAsync(usuario);
-		System.out.println("Usuario guardado correctamente en la BBDD");
 	}
 }

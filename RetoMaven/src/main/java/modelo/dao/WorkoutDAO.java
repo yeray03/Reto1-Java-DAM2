@@ -1,17 +1,20 @@
 package modelo.dao;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.cloud.FirestoreClient;
+import pojos.Ejercicio;
 import pojos.Workout;
-import java.util.ArrayList;
 
 import modelo.FirebaseInitialize;
 
@@ -34,12 +37,15 @@ public class WorkoutDAO extends FirebaseInitialize {
 		CollectionReference workoutsRef = getWorkouts();
 		ApiFuture<QuerySnapshot> query = workoutsRef.whereEqualTo("nivel", level).get();
 		QuerySnapshot querySnapshot = query.get();
+		
 		ArrayList<Workout> workouts = new ArrayList<Workout>();
 		for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-			workouts.add(document.toObject(Workout.class));
+			Workout workout = mapDocumentToWorkout(document);
+			if (workout != null) {
+				workouts.add(workout);
+			}
 		}
 		return workouts;
-
 	}
 
 	public ArrayList<Workout> getWorkoutUntilLevel(int level)
@@ -47,36 +53,65 @@ public class WorkoutDAO extends FirebaseInitialize {
 		CollectionReference workoutsRef = getWorkouts();
 		ApiFuture<QuerySnapshot> query = workoutsRef.whereLessThanOrEqualTo("nivel", level).get();
 		QuerySnapshot querySnapshot = query.get();
+		
 		ArrayList<Workout> workouts = new ArrayList<Workout>();
 		for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-			workouts.add(document.toObject(Workout.class));
+			Workout workout = mapDocumentToWorkout(document);
+			if (workout != null) {
+				workouts.add(workout);
+			}
 		}
 		return workouts;
 	}
+	
+	// Mapea un DocumentSnapshot a un objeto Workout, resolviendo las referencias a Ejercicio
+	//OTRA FUNCION QUE FUNCIONA GRACIAS A REZARLE AL SEÑOR
+	//Y A QUE FIREBASE ES LO MEJOR QUE BIEEEEN
+	//ME QUIERO SUIC
+	private Workout mapDocumentToWorkout(DocumentSnapshot document) {
+		try {
+			Workout workout = new Workout();
+			
+			String nombre = document.getString("nombre");
+			Long nivelLong = document.getLong("nivel");
+			Long numEjerciciosLong = document.getLong("numEjercicios");
+			String videoUrl = document.getString("videoUrl");
+			
+			workout.setNombre(nombre != null ? nombre : "");
+			workout.setNivel(nivelLong != null ? nivelLong.intValue() : 0);
+			workout.setNumEjercicios(numEjerciciosLong != null ? numEjerciciosLong.intValue() : 0);
+			workout.setUrlVideo(videoUrl != null ? videoUrl : "");
+			
+			@SuppressWarnings("unchecked")
+			List<DocumentReference> ejerciciosRefs = (List<DocumentReference>) document.get("ejercicios");
+			ArrayList<Ejercicio> ejercicios = new ArrayList<>();
+			
+			if (ejerciciosRefs != null && !ejerciciosRefs.isEmpty()) {
+				for (DocumentReference ref : ejerciciosRefs) {
+					try {
+						ApiFuture<DocumentSnapshot> ejercicioFuture = ref.get();
+						DocumentSnapshot ejercicioDoc = ejercicioFuture.get();
+						
+						if (ejercicioDoc.exists()) {
+							Ejercicio ejercicio = ejercicioDoc.toObject(Ejercicio.class);
+							if (ejercicio != null) {
+								ejercicios.add(ejercicio);
+							}
+						}
+					} catch (Exception e) {
+						System.err.println("Error al resolver ejercicio: " + ref.getPath());
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			workout.setEjercicios(ejercicios);
+			return workout;
+			
+		} catch (Exception e) {
+			System.err.println("Error al mapear workout del documento: " + document.getId());
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
-//	// Añadir Workout
-//	public void anyadirWorkout(Usuario usuario) throws Exception {
-//		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
-//		db.collection("usuarios").document(usuario.getEmail()).set(usuario); // crea el documento en usuarios y usa el email como ID
-//	}
-//
-//	// LOGIN USUARIO
-//	public Usuario buscarUsuarioPorEmail(String email) throws IOException, ExecutionException, InterruptedException {
-//		
-//		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
-//		
-//		ApiFuture<QuerySnapshot> snapshot = db.collection("usuarios").whereEqualTo("email", email).get();	
-//		QuerySnapshot querySnapshot = snapshot.get();
-//		
-//		if (!querySnapshot.isEmpty()) {
-//			DocumentSnapshot documento = querySnapshot.getDocuments().get(0);
-//			return documento.toObject(Usuario.class);
-//		}
-//		return null;
-//	}
-//
-//	public void guardarUsuario(Usuario usuario) {
-//		DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuarios");
-//		ref.child(usuario.getEmail()).setValueAsync(usuario);
-//		System.out.println("Usuario guardado correctamente en la BBDD");
-//	}

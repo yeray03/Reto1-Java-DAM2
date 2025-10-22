@@ -38,7 +38,6 @@ public class EjercicioPanel extends JPanel {
         add(lblCronometro);
 
         // Ejercicio
-        String nombreEj = (ejercicio != null && ejercicio.getNombre() != null) ? ejercicio.getNombre() : "Desconocido";
         lblEjercicio = new JLabel("Ejercicio: " );
         lblEjercicio.setForeground(Color.WHITE);
         lblEjercicio.setBounds(250, 20, 250, 25);
