@@ -18,14 +18,13 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.html.HTML;
+import javax.swing.BoxLayout;
+import javax.swing.ComboBoxEditor;
+import javax.swing.JComboBox;
 
 import controlador.WorkoutControlador;
 import pojos.Usuario;
 import pojos.Workout;
-
-import javax.swing.BoxLayout;
-import javax.swing.ComboBoxEditor;
-import javax.swing.JComboBox;
 
 public class WorkoutsPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -136,6 +135,9 @@ public class WorkoutsPanel extends JPanel {
 
 					if (opcion == JOptionPane.YES_OPTION) {
 						// INICIAR EJERCICIO
+						frame.setContentPane(new EjercicioPanel(frame, usuario, workoutSelect));
+						frame.validate();
+
 					}
 				}
 

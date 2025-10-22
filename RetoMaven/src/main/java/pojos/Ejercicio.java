@@ -1,30 +1,44 @@
 package pojos;
 
+import java.util.ArrayList;
+
 public class Ejercicio {
 
+	private String descripcion;
+	private int idEjercico;
 	private String nombre;
-	private int duracion;
-
-	public Ejercicio(String nombre, int duracion) {
-		super();
-		this.nombre = nombre;
-		this.duracion = duracion;
+	private ArrayList<Integer> seriesIds;
+	private String videoUrl;
+	
+	public String getDescripcion() {
+		return descripcion;
 	}
-
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+	public int getIdWorkout() {
+		return idEjercico;
+	}
+	public void setIdWorkout(int idWorkout) {
+		this.idEjercico = idWorkout;
+	}
 	public String getNombre() {
 		return nombre;
 	}
-
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-
-	public int getDuracion() {
-		return duracion;
+	public ArrayList<Integer> getSeriesIds() {
+		return seriesIds;
 	}
-
-	public void setDuracion(int duracion) {
-		this.duracion = duracion;
+	public void setSeriesIds(ArrayList<Integer> seriesIds) {
+		this.seriesIds = seriesIds;
+	}
+	public String getVideoUrl() {
+		return videoUrl;
+	}
+	public void setVideoUrl(String videoUrl) {
+		this.videoUrl = videoUrl;
 	}
 
 }

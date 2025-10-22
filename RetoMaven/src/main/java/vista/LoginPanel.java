@@ -99,9 +99,9 @@ public class LoginPanel extends JPanel {
 			frame.validate();
 		});
 
-		// Hacer que el botón login sea el predeterminado al pulsar Enter
-		
+		// Hacer que el botón login sea el predeterminado al pulsar Enter		
 		frame.getRootPane().setDefaultButton(loginButton);
+		
 		// Imagen de fondo (está en /resources)
 		ImageIcon fondo = new ImageIcon(getClass().getResource("/BackgroundLogin.png"));
 		JLabel fondoLabel = new JLabel(fondo);
