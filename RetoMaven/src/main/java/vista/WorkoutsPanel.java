@@ -143,6 +143,15 @@ public class WorkoutsPanel extends JPanel {
 			}
 
 		});
+		
+		
+		lblPerfil.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				frame.setContentPane(new PerfilPanel(frame, usuario));
+				frame.validate();
+			}
+		});
 
 	}
 
