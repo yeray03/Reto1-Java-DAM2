@@ -7,12 +7,19 @@ public class Usuario {
 	private String contrasena;
 	private String email;
 	private String fechaNacimiento;
-//	private String historico;
 	private int nivel;
 	private String nombre;
 	private int tipoUsuario;
 
 	public Usuario() {
+	}
+	
+	public Usuario(String email, String nombre, String apellidos, String contrasena, String fechaNacimiento) {
+		this.email = email;
+		this.nombre = nombre;
+		this.apellidos = apellidos;
+		this.contrasena = contrasena;
+		this.fechaNacimiento = fechaNacimiento;
 	}
 
 	public String getApellidos() {

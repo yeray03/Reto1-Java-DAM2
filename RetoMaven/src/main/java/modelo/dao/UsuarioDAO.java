@@ -49,4 +49,14 @@ public class UsuarioDAO extends FirebaseInitialize {
 		ref.child(usuario.getEmail()).setValueAsync(usuario);
 		System.out.println("Usuario guardado correctamente en la BBDD");
 	}
+
+	public void editarUsuario(Usuario usuarioActualizado, String emailAntiguo) {
+		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
+		db.collection("usuarios").document(emailAntiguo).set(usuarioActualizado);
+		
+		
+//		ref.child(usuarioActualizado.getEmail()).setValueAsync(usuarioActualizado);
+//		System.out.println("Usuario actualizado correctamente en la BBDD");
+		
+	}
 }
