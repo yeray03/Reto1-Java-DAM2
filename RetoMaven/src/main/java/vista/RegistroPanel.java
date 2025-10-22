@@ -101,6 +101,7 @@ public class RegistroPanel extends JPanel {
 				usuario.setContrasena(contrasena);
 				usuario.setFechaNacimiento(fechaNacimiento);
 				usuario.setTipoUsuario(tipoUsuario);
+				usuario.setNivel(0);
 //				usuario.setHistorico("");
 				RegistroControlador controlador = new RegistroControlador();
 				String resultado = controlador.registrarUsuario(usuario);
