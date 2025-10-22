@@ -7,7 +7,7 @@ public class Usuario {
 	private String contrasena;
 	private String email;
 	private String fechaNacimiento;
-	private String historico;
+//	private String historico;
 	private int nivel;
 	private String nombre;
 	private int tipoUsuario;
@@ -81,13 +81,13 @@ public class Usuario {
 		this.fechaNacimiento = fechaNacimiento;
 	}
 
-	public String getHistorico() {
-		return historico;
-	}
-
-	public void setHistorico(String historico) {
-		this.historico = historico;
-	}
+//	public String getHistorico() {
+//		return historico;
+//	}
+//
+//	public void setHistorico(String historico) {
+//		this.historico = historico;
+//	}
 
 	public int getNivel() {
 		return nivel;

@@ -22,6 +22,7 @@ import javax.swing.ComboBoxEditor;
 import javax.swing.JComboBox;
 
 import controlador.WorkoutControlador;
+import pojos.Ejercicio;
 import pojos.Usuario;
 import pojos.Workout;
 
@@ -118,12 +119,12 @@ public class WorkoutsPanel extends JPanel {
 				int row = table.rowAtPoint(e.getPoint());
 				if (row >= 0) {
 					Workout workoutSelect = workouts.get(row);
-					ArrayList<String> ejercicios = workoutSelect.getEjercicios();
+					ArrayList<Ejercicio> ejercicios = workoutSelect.getEjercicios();
 					JPanel panel = new JPanel();
 					panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 					panel.add(new JLabel("Ejercicios:"));
-					for (String nombre : ejercicios) {
-						panel.add(new JLabel(nombre));
+					for (Ejercicio nombre : ejercicios) {
+						panel.add(new JLabel(nombre.getNombre()));
 					}
 
 					int opcion = JOptionPane.showOptionDialog(WorkoutsPanel.this, panel,

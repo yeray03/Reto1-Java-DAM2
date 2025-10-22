@@ -28,6 +28,7 @@ public class UsuarioDAO extends FirebaseInitialize {
 		db.collection("usuarios").document(usuario.getEmail()).set(usuario); // crea el documento en usuarios y usa el email como ID
 	}
 
+	
 	// LOGIN USUARIO
 	public Usuario buscarUsuarioPorEmail(String email) throws IOException, ExecutionException, InterruptedException {
 		
