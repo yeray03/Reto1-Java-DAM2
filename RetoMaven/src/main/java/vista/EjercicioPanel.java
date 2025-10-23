@@ -14,7 +14,6 @@ import javax.swing.border.TitledBorder;
 import pojos.Usuario;
 import pojos.Workout;
 import pojos.Ejercicio;
-import controlador.EjercicioControlador;
 
 public class EjercicioPanel extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -24,13 +23,17 @@ public class EjercicioPanel extends JPanel {
     private JLabel lblWorkout;
     private JLabel lblTiempoEjercicio;
     private JTextArea txtDescanso;
-    private JButton btnFoto1, btnFoto2, btnFoto3;
+    private JButton btnSerie1;
+    private JButton btnSerie2;
+    private JButton btnSerie3;
     private JButton btnGreen, btnSalir;
+    
     
     public EjercicioPanel(JFrame frame, Usuario usuario, Workout workout, Ejercicio ejercicio) {
     	setLayout(null);
         setBackground(Color.decode("#232637"));
-
+        setName("EjercicioPanel");
+        
         // Cronómetro
         lblCronometro = new JLabel("Cronómetro aquí");
         lblCronometro.setForeground(Color.WHITE);
@@ -38,7 +41,7 @@ public class EjercicioPanel extends JPanel {
         add(lblCronometro);
 
         // Ejercicio
-        lblEjercicio = new JLabel("Ejercicio: " );
+        lblEjercicio = new JLabel(("<html>Ejercicio: " + ejercicio.getNombre() + "<br>" + ejercicio.getDescripcion() + "</html>"));
         lblEjercicio.setForeground(Color.WHITE);
         lblEjercicio.setBounds(250, 20, 250, 25);
         add(lblEjercicio);
@@ -72,20 +75,20 @@ public class EjercicioPanel extends JPanel {
         add(txtDescanso);
 
         // Botones FOTO
-        btnFoto1 = new JButton("Serie 1");
-        btnFoto1.setBounds(250, 80, 320, 36);
-        stylePhotoButton(btnFoto1);
-        add(btnFoto1);
+        btnSerie1 = new JButton("Serie 1");
+        btnSerie1.setBounds(250, 80, 320, 36);
+        stylePhotoButton(btnSerie1);
+        add(btnSerie1);
 
-        btnFoto2 = new JButton("Serie 2");
-        btnFoto2.setBounds(250, 130, 320, 36);
-        stylePhotoButton(btnFoto2);
-        add(btnFoto2);
+        btnSerie2 = new JButton("Serie 2");
+        btnSerie2.setBounds(250, 130, 320, 36);
+        stylePhotoButton(btnSerie2);
+        add(btnSerie2);
 
-        btnFoto3 = new JButton(" Serie 3");
-        btnFoto3.setBounds(250, 180, 320, 36);
-        stylePhotoButton(btnFoto3);
-        add(btnFoto3);
+        btnSerie3 = new JButton(" Serie 3");
+        btnSerie3.setBounds(250, 180, 320, 36);
+        stylePhotoButton(btnSerie3);
+        add(btnSerie3);
 
         // Botón verde central
         btnGreen = new JButton();
@@ -106,9 +109,8 @@ public class EjercicioPanel extends JPanel {
         btnSalir.setCursor(new Cursor(Cursor.HAND_CURSOR));
         add(btnSalir);
 
-        // Acción Salir: volver a WorkoutsPanel
+        // Boton de salir y volver a WorkoutsPanel
         btnSalir.addActionListener((ActionEvent e) -> {
-            // Aquí deberías pasar el usuario si lo necesitas
             frame.setContentPane(new WorkoutsPanel(frame, usuario));
             frame.validate();
         });
