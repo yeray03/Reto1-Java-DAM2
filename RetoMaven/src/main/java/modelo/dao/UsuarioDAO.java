@@ -28,15 +28,23 @@ public class UsuarioDAO extends FirebaseInitialize {
 			usuario.setNivel(0);
 		}
 
-		db.collection("usuarios").document(usuario.getNickname()).set(usuario);
+		// Email en minúsculas para consistencia
+		String emailNormalizado = usuario.getEmail().toLowerCase().trim();
+		usuario.setEmail(emailNormalizado);
+		
+		String nickname = usuario.getNickname().trim();
+		usuario.setNickname(nickname);
+
+		db.collection("usuarios").document(nickname).set(usuario);
 	}
 
+	//Busca el usuario por nickname
 	public Usuario buscarUsuarioPorNick(String nickname) throws IOException, ExecutionException, InterruptedException {
 		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
 
-		String nickNormalizado = nickname.trim();
+		String nickBuscado = nickname.trim();
 
-		ApiFuture<QuerySnapshot> snapshot = db.collection("usuarios").whereEqualTo("nickname", nickNormalizado).get();
+		ApiFuture<QuerySnapshot> snapshot = db.collection("usuarios").whereEqualTo("nickname", nickBuscado).get();
 		QuerySnapshot querySnapshot = snapshot.get();
 
 		if (!querySnapshot.isEmpty()) {
@@ -45,7 +53,8 @@ public class UsuarioDAO extends FirebaseInitialize {
 		}
 		return null;
 	}
-
+	
+	// Guarda el usuario en la base de datos
 	public void guardarUsuario(Usuario usuario) {
 		DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuarios");
 		ref.child(usuario.getNickname()).setValueAsync(usuario);
@@ -57,4 +66,3 @@ public class UsuarioDAO extends FirebaseInitialize {
 		db.collection("usuarios").document(usuarioActualizado.getNickname()).set(usuarioActualizado);
 	}
 }
-
