@@ -2,127 +2,201 @@ package vista;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Date;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
+import modelo.dao.HistoricoDAO;
+import pojos.Ejercicio;
+import pojos.Historico;
+import pojos.Serie;
 import pojos.Usuario;
 import pojos.Workout;
-import pojos.Ejercicio;
 
 public class EjercicioPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    private JLabel lblCronometro;
+    private JLabel lblCronometroTotal;
     private JLabel lblEjercicio;
+    private JLabel lblDescripcion;
     private JLabel lblWorkout;
-    private JLabel lblTiempoEjercicio;
+    private JLabel lblTiempoSerie;
     private JTextArea txtDescanso;
-    private JButton btnSerie1;
-    private JButton btnSerie2;
-    private JButton btnSerie3;
-    private JButton btnGreen, btnSalir;
-    
-    
-    public EjercicioPanel(JFrame frame, Usuario usuario, Workout workout, Ejercicio ejercicio) {
-    	setLayout(null);
-        setBackground(Color.decode("#232637"));
-        setName("EjercicioPanel");
+    private JButton btnSerie1, btnSerie2, btnSerie3;
+    private JButton btnControl, btnSalir;
         
-        // Cronómetro
-        lblCronometro = new JLabel("Cronómetro aquí");
-        lblCronometro.setForeground(Color.WHITE);
-        lblCronometro.setBounds(30, 20, 200, 25);
-        add(lblCronometro);
+    private Usuario usuario;
+    private Workout workout;
+    private Ejercicio ejercicioActual;
+    
+    
+    
+    public EjercicioPanel(JFrame frame, Usuario usuario, Workout workout, Ejercicio primerEjercicio) {
+        this.usuario = usuario;
+        this.workout = workout;
+        this.ejercicioActual = primerEjercicio;
+        
+        setLayout(null);
+        setBackground(Color.decode("#232637"));
 
-        // Ejercicio
-        lblEjercicio = new JLabel(("<html>Ejercicio: " + ejercicio.getNombre() + "<br>" + ejercicio.getDescripcion() + "</html>"));
+        lblCronometroTotal = new JLabel("00:00");
+        lblCronometroTotal.setForeground(Color.WHITE);
+        lblCronometroTotal.setFont(new Font("Arial", Font.BOLD, 24));
+        lblCronometroTotal.setBounds(30, 20, 150, 35);
+        add(lblCronometroTotal);
+
+        lblEjercicio = new JLabel("Ejercicio: " + ejercicioActual.getNombre());
         lblEjercicio.setForeground(Color.WHITE);
-        lblEjercicio.setBounds(250, 20, 250, 25);
+        lblEjercicio.setFont(new Font("Arial", Font.BOLD, 16));
+        lblEjercicio.setBounds(200, 20, 300, 25);
         add(lblEjercicio);
 
-        // Workout
         lblWorkout = new JLabel("Workout: " + workout.getNombre());
         lblWorkout.setForeground(Color.WHITE);
         lblWorkout.setBounds(540, 20, 120, 25);
         add(lblWorkout);
 
-        // Tiempo Ejercicio
-        lblTiempoEjercicio = new JLabel("Tiempo Ejercicio 00:00");
-        lblTiempoEjercicio.setForeground(Color.WHITE);
-        lblTiempoEjercicio.setBounds(30, 70, 180, 25);
-        add(lblTiempoEjercicio);
+        lblDescripcion = new JLabel("<html>" + ejercicioActual.getDescripcion() + "</html>");
+        lblDescripcion.setForeground(new Color(180, 180, 180));
+        lblDescripcion.setBounds(30, 60, 600, 40);
+        add(lblDescripcion);
 
-        // Descanso
-        txtDescanso = new JTextArea("Descanso timer");
+        lblTiempoSerie = new JLabel("Serie: --:--");
+        lblTiempoSerie.setForeground(Color.WHITE);
+        lblTiempoSerie.setFont(new Font("Arial", Font.BOLD, 18));
+        lblTiempoSerie.setBounds(30, 110, 180, 25);
+        add(lblTiempoSerie);
+
+        txtDescanso = new JTextArea("--:--");
         txtDescanso.setEditable(false);
         txtDescanso.setOpaque(false);
-        txtDescanso.setForeground(Color.WHITE);
+        txtDescanso.setForeground(Color.ORANGE);
+        txtDescanso.setFont(new Font("Arial", Font.BOLD, 24));
         txtDescanso.setBorder(BorderFactory.createTitledBorder(
-        	    BorderFactory.createLineBorder(Color.GRAY), 
-        	    "Descanso",
-        	    TitledBorder.DEFAULT_JUSTIFICATION,
-        	    TitledBorder.DEFAULT_POSITION,
-        	    null,
-        	    Color.ORANGE 
-        	));
-        txtDescanso.setBounds(30, 110, 180, 50);
+            BorderFactory.createLineBorder(Color.GRAY), 
+            "Descanso",
+            TitledBorder.DEFAULT_JUSTIFICATION,
+            TitledBorder.DEFAULT_POSITION,
+            null,
+            Color.ORANGE 
+        ));
+        txtDescanso.setBounds(30, 150, 180, 70);
         add(txtDescanso);
 
-        // Botones FOTO
-        btnSerie1 = new JButton("Serie 1");
-        btnSerie1.setBounds(250, 80, 320, 36);
-        stylePhotoButton(btnSerie1);
+        btnSerie1 = new JButton();
+        btnSerie1.setBounds(250, 110, 370, 36);
+        styleSerieButton(btnSerie1, false);
         add(btnSerie1);
 
-        btnSerie2 = new JButton("Serie 2");
-        btnSerie2.setBounds(250, 130, 320, 36);
-        stylePhotoButton(btnSerie2);
+        btnSerie2 = new JButton();
+        btnSerie2.setBounds(250, 160, 370, 36);
+        styleSerieButton(btnSerie2, false);
         add(btnSerie2);
 
-        btnSerie3 = new JButton(" Serie 3");
-        btnSerie3.setBounds(250, 180, 320, 36);
-        stylePhotoButton(btnSerie3);
+        btnSerie3 = new JButton();
+        btnSerie3.setBounds(250, 210, 370, 36);
+        styleSerieButton(btnSerie3, false);
         add(btnSerie3);
 
-        // Botón verde central
-        btnGreen = new JButton();
-        btnGreen.setBounds(350, 250, 36, 36);
-        btnGreen.setBackground(new Color(99, 179, 92));
-        btnGreen.setOpaque(true);
-        btnGreen.setBorder(BorderFactory.createLineBorder(new Color(90, 95, 100)));
-        btnGreen.setFocusPainted(false);
-        add(btnGreen);
+        btnControl = new JButton("INICIAR");
+        btnControl.setBounds(270, 270, 150, 50);
+        btnControl.setBackground(new Color(99, 179, 92));
+        btnControl.setForeground(Color.WHITE);
+        btnControl.setFont(new Font("Arial", Font.BOLD, 18));
+        btnControl.setOpaque(true);
+        btnControl.setBorder(BorderFactory.createLineBorder(new Color(90, 95, 100)));
+        btnControl.setFocusPainted(false);
+        btnControl.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        add(btnControl);
 
-        // Botón Salir
         btnSalir = new JButton("Salir");
-        btnSalir.setBounds(540, 320, 90, 28);
+        btnSalir.setBounds(440, 270, 150, 50);
         btnSalir.setBackground(new Color(220, 60, 60));
         btnSalir.setForeground(Color.WHITE);
+        btnSalir.setFont(new Font("Arial", Font.BOLD, 18));
         btnSalir.setFocusPainted(false);
         btnSalir.setBorder(BorderFactory.createLineBorder(new Color(90, 95, 100)));
         btnSalir.setCursor(new Cursor(Cursor.HAND_CURSOR));
         add(btnSalir);
 
-        // Boton de salir y volver a WorkoutsPanel
-        btnSalir.addActionListener((ActionEvent e) -> {
-            frame.setContentPane(new WorkoutsPanel(frame, usuario));
-            frame.validate();
+        cargarSeriesDelEjercicio();
+
+        btnControl.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+
+        btnSalir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
         });
     }
 
-    private void stylePhotoButton(JButton b) {
-        b.setHorizontalAlignment(JButton.LEFT);
-        b.setForeground(Color.WHITE);
-        b.setBackground(new Color(60, 64, 68));
-        b.setOpaque(true);
-        b.setFocusPainted(false);
-        b.setBorder(BorderFactory.createLineBorder(new Color(110, 115, 120)));
-        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    private void cargarSeriesDelEjercicio() {
+        ArrayList<Serie> series = ejercicioActual.getSeries();
+        
+        if (series == null || series.isEmpty()) {       
+        }
+        
+        if (series.size() > 0) {
+            Serie s1 = series.get(0);
+            btnSerie1.setText(s1.getNombre() + " - " + s1.getRepeticiones() + " reps");
+            btnSerie1.setVisible(true);
+        } else {
+            btnSerie1.setVisible(false);
+        }
+        
+        if (series.size() > 1) {
+            Serie s2 = series.get(1);
+            btnSerie2.setText(s2.getNombre() + " - " + s2.getRepeticiones() + " reps");
+            btnSerie2.setVisible(true);
+        } else {
+            btnSerie2.setVisible(false);
+        }
+        
+        if (series.size() > 2) {
+            Serie s3 = series.get(2);
+            btnSerie3.setText(s3.getNombre() + " - " + s3.getRepeticiones() + " reps");
+            btnSerie3.setVisible(true);
+        } else {
+            btnSerie3.setVisible(false);
+        }
+    }
+    //Esto lo estaba usando de prueba, dejenlo comentado
+//    private ArrayList<Serie> generarSeriesDefault() {
+//        ArrayList<Serie> series = new ArrayList<>();
+//        series.add(new Serie("Serie 1", 10, 30, 15, ""));
+//        series.add(new Serie("Serie 2", 10, 30, 15, ""));
+//        series.add(new Serie("Serie 3", 10, 30, 0, ""));
+//        ejercicioActual.setSeries(series);
+//        return series;
+//    }
+
+
+    private void styleSerieButton(JButton boton, boolean activa) {
+    	boton.setHorizontalAlignment(JButton.LEFT);
+    	boton.setForeground(Color.WHITE);
+        if (activa) {
+        	boton.setBackground(new Color(70, 130, 180));
+        } else {
+        	boton.setBackground(new Color(60, 64, 68));
+        }
+        boton.setOpaque(true);
+        boton.setFocusPainted(false);
+        boton.setBorder(BorderFactory.createLineBorder(new Color(110, 115, 120)));
+        boton.setEnabled(false);
     }
 }

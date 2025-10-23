@@ -22,18 +22,14 @@ public class HistoricoDAO extends FirebaseInitialize {
 
     /**
      * Obtiene el histórico de un usuario
-     * @param email Email del usuario (ID del documento en usuarios)
+     * @param nickname Nickname del usuario (ID del documento en usuarios)
      * @return Lista de registros históricos
      */
-    public ArrayList<Historico> getHistoricoPorUsuario(String email) throws ExecutionException, InterruptedException {
+    public ArrayList<Historico> getHistoricoPorUsuario(String nickname) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
         
-        // Normalizar email
-        String emailNormalizado = email.toLowerCase().trim();
-        
-        // Acceder a la subcolección historico del usuario
         CollectionReference historicoRef = db.collection("usuarios")
-                                             .document(emailNormalizado)
+                                             .document(nickname)
                                              .collection("historico");
         
         ApiFuture<QuerySnapshot> query = historicoRef.get();
@@ -47,28 +43,29 @@ public class HistoricoDAO extends FirebaseInitialize {
             }
         }
         
-        System.out.println("✅ Históricos recuperados para " + emailNormalizado + ": " + historicos.size());
+        System.out.println("Históricos recuperados para " + nickname + ": " + historicos.size());
         return historicos;
     }
     
     /**
      * Añade un registro al histórico del usuario
-     * @param email Email del usuario
+     * @param nickname Nickname del usuario
      * @param historico Objeto Historico a guardar
      */
-    public void addHistorico(String email, Historico historico) throws Exception {
+    public void addHistorico(String nickname, Historico historico) throws Exception {
         Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
         
-        // ✅ Normalizar email
-        String emailNormalizado = email.toLowerCase().trim();
+        //Debug guapisimo
+        System.out.println("Guardando histórico para usuario: " + nickname);
+        System.out.println(" Workout: " + historico.getWorkoutNombre());
+        System.out.println(" Ruta: usuarios/" + nickname + "/historico");
         
-        // Añadir documento con ID autogenerado en la subcolección historico
         db.collection("usuarios")
-          .document(emailNormalizado)
+          .document(nickname)
           .collection("historico")
-          .document() // ID autogenerado
+          .document()
           .set(historico);
         
-        System.out.println("✅ Registro añadido al histórico de " + emailNormalizado);
+        System.out.println("Registro añadido al histórico de " + nickname);
     }
 }
