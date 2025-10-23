@@ -54,8 +54,18 @@ public class RegistroControlador {
 		}
 	}
 
-	public void actualizarUsuario(Usuario usuarioActualizado) {
-		usuarioDAO.editarUsuario(usuarioActualizado);
+	public String actualizarUsuario(Usuario usuarioActualizado) {
+		if (usuarioActualizado.getNickname() == null || usuarioActualizado.getNickname().trim().isEmpty() || usuarioActualizado.getEmail() == null
+				|| usuarioActualizado.getEmail().trim().isEmpty() || usuarioActualizado.getContrasena() == null
+				|| usuarioActualizado.getContrasena().isEmpty() || usuarioActualizado.getNombre() == null
+				|| usuarioActualizado.getNombre().trim().isEmpty() || usuarioActualizado.getApellidos() == null
+				|| usuarioActualizado.getApellidos().trim().isEmpty() || usuarioActualizado.getFechaNacimiento() == null
+				|| usuarioActualizado.getFechaNacimiento().trim().isEmpty()) {
+			return "Por favor, rellena todos los campos.";
+		}else {
+			usuarioDAO.editarUsuario(usuarioActualizado);
+			return "Usuario actualizado correctamente.";
+		}
 
 	}
 }

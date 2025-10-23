@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import controlador.UsuarioControlador;
@@ -174,6 +175,11 @@ public class PerfilPanel extends JPanel {
 
 					btnEdit_Save.setText("Guardar Cambios");
 				} else {
+					if (!isValidDate(txtNacimiento.getText())) {
+						JOptionPane.showMessageDialog(frame, "Formato de fecha inválido. Use DD/MM/YYYY.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 					edit = false;
 					RegistroControlador controlador = RegistroControlador.getInstance();
 					usuario.setNickname(txtNickname.getText());
@@ -183,7 +189,11 @@ public class PerfilPanel extends JPanel {
 					usuario.setContrasena(txtContraseña.getText());
 					usuario.setFechaNacimiento(txtNacimiento.getText());
 
-					controlador.actualizarUsuario(usuario);
+					String resultado = controlador.actualizarUsuario(usuario);
+					if (resultado.equals("Usuario actualizado correctamente.")) {
+						JOptionPane.showMessageDialog(frame, resultado, "Éxito", JOptionPane.INFORMATION_MESSAGE);
+						frame.setContentPane(new LoginPanel(frame));
+					}
 					btnEdit_Save.setText("Activar Edición");
 					txtNombre.setEditable(false);
 					txtApellidos.setEditable(false);
@@ -197,14 +207,13 @@ public class PerfilPanel extends JPanel {
 					btnVolver.setEnabled(true);
 					btnVolver.setVisible(true);
 				}
-
 			}
 		});
 
 		// Acción botón volver
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setContentPane(new WorkoutsPanel(frame,usuario));
+				frame.setContentPane(new WorkoutsPanel(frame, usuario));
 				frame.validate();
 			}
 		});
@@ -231,6 +240,20 @@ public class PerfilPanel extends JPanel {
 			exe.printStackTrace();
 		} catch (InterruptedException inte) {
 			inte.printStackTrace();
+		}
+	}
+
+	// Validar formato de fecha, importamos librería Date de java.util
+	private boolean isValidDate(String dateStr) {
+		if (dateStr == null)
+			return false;
+		dateStr = dateStr.trim();
+		java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		try {
+			java.time.LocalDate.parse(dateStr, fmt);
+			return true;
+		} catch (java.time.format.DateTimeParseException e) {
+			return false;
 		}
 	}
 }
