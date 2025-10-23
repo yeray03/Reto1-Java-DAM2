@@ -28,10 +28,7 @@ public class UsuarioDAO extends FirebaseInitialize {
 			usuario.setNivel(0);
 		}
 
-		String emailNormalizado = usuario.getEmail().toLowerCase().trim();
-		usuario.setEmail(emailNormalizado);
-
-		db.collection("usuarios").document(emailNormalizado).set(usuario);
+		db.collection("usuarios").document(usuario.getNickname()).set(usuario);
 	}
 
 	public Usuario buscarUsuarioPorNick(String nickname) throws IOException, ExecutionException, InterruptedException {
@@ -58,11 +55,6 @@ public class UsuarioDAO extends FirebaseInitialize {
 	public void editarUsuario(Usuario usuarioActualizado) {
 		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
 		db.collection("usuarios").document(usuarioActualizado.getNickname()).set(usuarioActualizado);
-		
-		
-//		ref.child(usuarioActualizado.getEmail()).setValueAsync(usuarioActualizado);
-//		System.out.println("Usuario actualizado correctamente en la BBDD");
-		
 	}
 }
 

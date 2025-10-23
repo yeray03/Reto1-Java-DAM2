@@ -29,7 +29,7 @@ public class LoginPanel extends JPanel {
 	private JLabel logoLabel;
 
 	public LoginPanel(JFrame frame) {
-
+		frame.setSize(400, 400);
 		setLayout(null);
 		setBackground(Color.decode("#232637"));
 
