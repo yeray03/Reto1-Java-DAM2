@@ -1,9 +1,13 @@
 package pojos;
 
+import java.util.ArrayList;
+
+
 public class Ejercicio {
 
 	private String descripcion;
 	private String nombre;
+	private ArrayList<Serie> series;
 	
 	public String getDescripcion() {
 		return descripcion;
@@ -21,7 +25,13 @@ public class Ejercicio {
 	
 	@Override
 	public String toString() {
-		return "Ejercicio [descripcion=" + descripcion + ", nombre=" + nombre + "]";
+		return "Ejercicio [descripcion=" + descripcion + ", nombre=" + nombre + ", series=" + series + "]";
+	}
+	public ArrayList<Serie> getSeries() {
+		return series;
+	}
+	public void setSeries(ArrayList<Serie> series) {
+		this.series = series;
 	}
 
 }

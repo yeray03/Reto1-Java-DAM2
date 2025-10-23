@@ -14,7 +14,6 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import modelo.FirebaseInitialize;
 import pojos.Ejercicio;
-import pojos.Usuario;
 
 public class EjerciciosDAO extends FirebaseInitialize {
 
