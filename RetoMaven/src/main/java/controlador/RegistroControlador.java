@@ -29,7 +29,8 @@ public class RegistroControlador {
 	public String registrarUsuario(Usuario usuario) {
 		try {
 			// Validación básica
-			if (usuario.getEmail() == null || usuario.getEmail().trim().isEmpty() || usuario.getContrasena() == null
+			if (usuario.getNickname() == null || usuario.getNickname().trim().isEmpty() || usuario.getEmail() == null
+					|| usuario.getEmail().trim().isEmpty() || usuario.getContrasena() == null
 					|| usuario.getContrasena().isEmpty() || usuario.getNombre() == null
 					|| usuario.getNombre().trim().isEmpty() || usuario.getApellidos() == null
 					|| usuario.getApellidos().trim().isEmpty() || usuario.getFechaNacimiento() == null
@@ -38,7 +39,7 @@ public class RegistroControlador {
 			}
 
 			// Comprobamos si el usuario ya existe
-			Usuario existente = usuarioDAO.buscarUsuarioPorEmail(usuario.getEmail().trim().toLowerCase());
+			Usuario existente = usuarioDAO.buscarUsuarioPorNick(usuario.getNickname().trim().toLowerCase());
 			if (existente != null) {
 				return "El usuario ya estaba registrado.";
 			}
@@ -53,8 +54,8 @@ public class RegistroControlador {
 		}
 	}
 
-	public void actualizarUsuario(Usuario usuarioActualizado, String emailAntiguo) {
-		usuarioDAO.editarUsuario(usuarioActualizado, emailAntiguo);
+	public void actualizarUsuario(Usuario usuarioActualizado) {
+		usuarioDAO.editarUsuario(usuarioActualizado);
 
 	}
 }

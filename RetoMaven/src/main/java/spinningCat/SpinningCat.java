@@ -28,6 +28,4 @@ public class SpinningCat extends JFrame {
             new SpinningCat();
         });
     }
-    
-    
 }

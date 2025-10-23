@@ -10,21 +10,21 @@ public class Usuario {
 	private int nivel;
 	private String nombre;
 	private int tipoUsuario;
-	private String apellidos = "";
-	private String contrasena = "";
-	private String email = "";
-	private String fechaNacimiento = "";
-	private int nivel = 0;
-	private String nombre = "";
-	private int tipoUsuario = 0;
+	private String nickname;
 
-	public Usuario(String email, String nombre, String contrasena, String fechaNacimiento) {
+	public Usuario(String nickname, String email, String nombre, String apellidos, String contrasena, String fechaNacimiento) {
+		this.nickname = nickname;
 		this.email = email;
 		this.nombre = nombre;
+		this.apellidos = apellidos;
 		this.contrasena = contrasena;
 		this.fechaNacimiento = fechaNacimiento;
 		this.nivel = 0;
 		this.tipoUsuario = 0;
+	}
+
+	public Usuario() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public String getApellidos() {
@@ -87,6 +87,14 @@ public class Usuario {
 		this.tipoUsuario = tipoUsuario;
 	}
 
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(apellidos, contrasena, email, fechaNacimiento, nombre, nivel, tipoUsuario);
@@ -109,7 +117,7 @@ public class Usuario {
 	@Override
 	public String toString() {
 		return "Usuario [apellidos=" + apellidos + ", contrasena=" + contrasena + ", email=" + email
-				+ ", fechaNacimiento=" + fechaNacimiento + ", nivel=" + nivel + ", nombre="
-				+ nombre + ", tipoUsuario=" + tipoUsuario + "]";
+				+ ", fechaNacimiento=" + fechaNacimiento + ", nivel=" + nivel + ", nombre=" + nombre + ", tipoUsuario="
+				+ tipoUsuario + ", nickname=" + nickname + "]";
 	}
 }

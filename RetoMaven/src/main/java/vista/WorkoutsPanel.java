@@ -1,8 +1,6 @@
 package vista;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -14,11 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.html.HTML;
 import javax.swing.BoxLayout;
-import javax.swing.ComboBoxEditor;
 import javax.swing.JComboBox;
 
 import controlador.WorkoutControlador;
@@ -36,7 +31,6 @@ public class WorkoutsPanel extends JPanel {
 	public WorkoutsPanel(JFrame frame, Usuario usuario) {
 		this.usuario = usuario;
 
-		
 		setLayout(null);
 		frame.setSize(648, 493);
 		frame.setLocationRelativeTo(null);
@@ -85,7 +79,6 @@ public class WorkoutsPanel extends JPanel {
 		workouts = controlador.getWorkoutsHastaNivel(usuario.getNivel());
 
 		// Initialize travelModel and travelTable
-//
 		workoutModel = new DefaultTableModel(new Object[] { "Nombre", "Nivel", "Numero de ejercicios", "Video" }, 0) {
 			private static final long serialVersionUID = 1L; // si no lo pongo da warning
 
@@ -94,7 +87,7 @@ public class WorkoutsPanel extends JPanel {
 				return false; // Ninguna celda será editable
 			}
 		};
-//
+		//
 		table = new JTable(workoutModel);
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setFocusable(false); // asi no muestra el cuadrado del focus al pulsar una celda
@@ -143,8 +136,7 @@ public class WorkoutsPanel extends JPanel {
 			}
 
 		});
-		
-		
+
 		lblPerfil.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

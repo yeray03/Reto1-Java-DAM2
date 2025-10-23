@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import controlador.LoginControlador;
+import controlador.UsuarioControlador;
 import pojos.Usuario;
 import javax.swing.ImageIcon;
 
@@ -21,7 +21,7 @@ public class LoginPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel titleLabel;
-	private JTextField emailField;
+	private JTextField nicknameField;
 	private JPasswordField passwordField;
 	private JButton loginButton;
 	private JButton registerButton;
@@ -46,15 +46,15 @@ public class LoginPanel extends JPanel {
 		add(titleLabel);
 
 		// Campos de texto
-		emailField = new JTextField();
-		emailField.setFont(new Font("Arial", Font.PLAIN, 16));
-		emailField.setBounds(35, 120, 300, 35);
-		emailField.setBackground(new Color(39, 42, 61));
-		emailField.setForeground(Color.WHITE);
-		emailField.setCaretColor(Color.WHITE);
-		emailField.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Email", 0, 0, null,
-				new Color(180, 180, 180)));
-		add(emailField);
+		nicknameField = new JTextField();
+		nicknameField.setFont(new Font("Arial", Font.PLAIN, 16));
+		nicknameField.setBounds(35, 120, 300, 35);
+		nicknameField.setBackground(new Color(39, 42, 61));
+		nicknameField.setForeground(Color.WHITE);
+		nicknameField.setCaretColor(Color.WHITE);
+		nicknameField.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Nickname", 0, 0,
+				null, new Color(180, 180, 180)));
+		add(nicknameField);
 
 		// Campo de contraseña
 		passwordField = new JPasswordField();
@@ -104,28 +104,28 @@ public class LoginPanel extends JPanel {
 
 		// Evento del botón login
 		loginButton.addActionListener(e -> {
-			String email = emailField.getText().trim();
+			String nickname = nicknameField.getText().trim();
 			String pass = new String(passwordField.getPassword());
 
-			if (email.isEmpty() || pass.isEmpty()) {
+			if (nickname.isEmpty() || pass.isEmpty()) {
 				JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
 				try {
 
-					LoginControlador controlador = LoginControlador.getInstance();
+					UsuarioControlador controlador = UsuarioControlador.getInstance();
 
-					Usuario usuario = controlador.login(email, pass);
+					Usuario usuario = controlador.buscarPorNick(nickname);
 
 					if (usuario == null) {
 						JOptionPane.showMessageDialog(this, "El usuario no existe.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					} else if (!usuario.getContrasena().equals(pass)) {
-						JOptionPane.showMessageDialog(this, "Usuario y/o contraseña incorrectos.", "Error",
+						JOptionPane.showMessageDialog(this, "Contraseña incorrecta.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					} else {
 
-						JOptionPane.showMessageDialog(this, "Login correcto. ¡Bienvenido/a " + usuario.getNombre(),
+						JOptionPane.showMessageDialog(this, "Login correcto. ¡Bienvenido/a " + usuario.getNickname(),
 								"Login", JOptionPane.INFORMATION_MESSAGE);
 						// Cambiar de pantalla
 						frame.setContentPane(new WorkoutsPanel(frame, usuario));
