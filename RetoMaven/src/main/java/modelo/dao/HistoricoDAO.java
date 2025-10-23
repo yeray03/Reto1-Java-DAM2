@@ -28,7 +28,7 @@ public class HistoricoDAO extends FirebaseInitialize {
     public ArrayList<Historico> getHistoricoPorUsuario(String email) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
         
-        // ✅ Normalizar email
+        // Normalizar email
         String emailNormalizado = email.toLowerCase().trim();
         
         // Acceder a la subcolección historico del usuario
