@@ -18,6 +18,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
+import modelo.CronometroDescansoThread;
+import modelo.CronometroThread;
 import modelo.dao.HistoricoDAO;
 import pojos.Ejercicio;
 import pojos.Historico;
@@ -37,9 +39,9 @@ public class EjercicioPanel extends JPanel {
 	private JButton btnSerie1, btnSerie2, btnSerie3;
 	private JButton btnControl, btnSalir;
 
-	// private CronometroTread cronometroTotal;
-	// private CronometroTread cronometroSerie;
-	// private CronometroDescansoThread descansoThread;
+	private CronometroThread cronometroTotal;
+	private CronometroThread cronometroSerie;
+	private CronometroDescansoThread cronometroDescanso;
 
 	private Usuario usuario;
 	private Workout workout;
@@ -165,10 +167,31 @@ public class EjercicioPanel extends JPanel {
 			pausarEjercicio();
 		}
 	}
+	
+	//Codigou de Borja
+//	// private void botonIniciarActionPerformed(java.awt.event.ActionEvent evt)
+//	// {//GEN-FIRST:event_btnIniciarActionPerformed
+//
+//	this.botonIniciar.setEnabled(false);
+//
+//	RelojCronometro relojCronometro = new RelojCronometro(23, 59, 50);
+//	relojCronometro.addObserver(this);
+//	Thread thread = new Thread(relojCronometro);
+//	thread.start();
+//
 
 	// Inicia el ejercicio :P
 	private void iniciarEjercicio() {
 		enPausa = false;
+		if (cronometroTotal == null) {
+			CronometroThread cronometroTotalRunnable = new CronometroThread(lblCronometroTotal, 0, true);
+			Thread thread = new Thread(cronometroTotalRunnable);
+			thread.start();
+			System.out.println("Iniciando cronómetro total");
+			cronometroTotal = cronometroTotalRunnable;
+		} else {
+			cronometroTotal.reanudar();
+		}
 
 		if (indiceSerieActual == 0) {
 			iniciarSiguienteSerie();
@@ -195,6 +218,22 @@ public class EjercicioPanel extends JPanel {
 			btnControl.setBackground(new Color(99, 179, 92));
 		});
 
+	}
+	
+	public void alFinalizarSerie() {
+		ArrayList<Serie> series = ejercicioActual.getSeries();
+		Serie serieActual = series.get(indiceSerieActual);
+		
+		marcarSerieComoCompletada(serieActual);
+		
+		System.out.println("Serie finalizada: " + indiceSerieActual);
+		// Aquí puedes manejar lo que sucede al finalizar una serie
+		// Por ejemplo, iniciar el cronómetro de descanso
+	}
+	
+	private void marcarSerieComoCompletada(Serie serieActual) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	// Pasa al siguiente ejercicio :P
