@@ -236,9 +236,13 @@ public class EjercicioPanel extends JPanel {
 		});
 	}
 
+	// Marca la serie activa en la UI
 	private void marcarSerieActiva(int indiceSerieActual2) {
-		// Hay que mirar como resetear todos los botones
-
+		// Todos a falso al empezar el ejercicio
+		styleSerieButton(btnSerie1, false);
+		styleSerieButton(btnSerie2, false);
+		styleSerieButton(btnSerie3, false);
+		
 		// Marcar la serie activa
 		if (indiceSerieActual2 == 0) {
 			styleSerieButton(btnSerie1, true);
@@ -269,13 +273,17 @@ public class EjercicioPanel extends JPanel {
 
 		marcarSerieComoCompletada(serieActual);
 
-		System.out.println("Serie finalizada: " + indiceSerieActual);
+		System.out.println("Serie finalizada: " + serieActual.getNombre());
+		
 		// Aquí hay que manejar lo que sucede al finalizar una serie
+		indiceSerieActual++;
 	}
 
 	private void marcarSerieComoCompletada(Serie serieActual) {
-		// TODO Auto-generated method stub
-
+		JButton boton = null;
+		
+		boton.setBackground(new Color(34, 139, 34));
+		boton.setForeground(Color.WHITE);
 	}
 
 	// Pasa al siguiente ejercicio :P
