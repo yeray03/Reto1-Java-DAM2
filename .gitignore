@@ -9,3 +9,5 @@ RetoMaven/target/classes/privateKey.json
 # Log files
 *.log
 
+# Clases locales del eclipse
+*.target
