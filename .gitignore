@@ -1,3 +1,11 @@
-/.metadata/
+#La private key que no deja subirla
 RetoMaven/src/main/resources/privateKey.json
 RetoMaven/target/classes/privateKey.json
+
+#Eclipse
+/.metadata/
+.settings/
+
+# Log files
+*.log
+

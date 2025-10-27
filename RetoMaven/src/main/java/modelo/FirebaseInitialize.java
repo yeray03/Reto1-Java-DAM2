@@ -25,6 +25,7 @@ public abstract class FirebaseInitialize {
 	 * Inicializa Firebase si aún no está inicializado. Se asegura que SOLO se
 	 * inicialice una vez.
 	 */
+	@SuppressWarnings("deprecation")
 	private void initializeFirebase() {
 		if (FirebaseApp.getApps().isEmpty()) {
 			InputStream serviceAccount = null;

@@ -41,6 +41,7 @@ public class EjercicioPanel extends JPanel {
 
 	private CronometroThread cronometroTotal;
 	private CronometroThread cronometroSerie;
+	private Thread threadCronometroSerie;
 	private CronometroDescansoThread cronometroDescanso;
 
 	private Usuario usuario;
@@ -167,8 +168,8 @@ public class EjercicioPanel extends JPanel {
 			pausarEjercicio();
 		}
 	}
-	
-	//Codigou de Borja
+
+	// Codigou de Borja
 //	// private void botonIniciarActionPerformed(java.awt.event.ActionEvent evt)
 //	// {//GEN-FIRST:event_btnIniciarActionPerformed
 //
@@ -183,6 +184,8 @@ public class EjercicioPanel extends JPanel {
 	// Inicia el ejercicio :P
 	private void iniciarEjercicio() {
 		enPausa = false;
+
+		// Crea el hilo si no existe
 		if (cronometroTotal == null) {
 			CronometroThread cronometroTotalRunnable = new CronometroThread(lblCronometroTotal, 0, true);
 			Thread thread = new Thread(cronometroTotalRunnable);
@@ -193,15 +196,39 @@ public class EjercicioPanel extends JPanel {
 			cronometroTotal.reanudar();
 		}
 
+		// Inicia la primera serie si es la primera vez
 		if (indiceSerieActual == 0) {
 			iniciarSiguienteSerie();
+		} else {
+			// Reanuda la serie actual
+			cronometroSerie.reanudar();
 		}
 
 	}
 
+	// Fiesta
 	private void iniciarSiguienteSerie() {
-		indiceSerieActual++;
-		System.out.println("Iniciando serie: " + indiceSerieActual);
+		ArrayList<Serie> series = ejercicioActual.getSeries();
+
+		// Verifica si hay más series
+		if (indiceSerieActual >= series.size()) {
+			System.out.println("Todas las series completadas del ejercicio: " + ejercicioActual.getNombre());
+			ejercicioCompletado = true;
+			manejarBotonControl();
+			return;
+		}
+
+		Serie serieActual = series.get(indiceSerieActual);
+		System.out.println("Iniciando serie: " + serieActual.getNombre());
+
+		// Marcar la serie actual como activa en la UI
+		marcarSerieActiva(indiceSerieActual);
+
+		// Crear e iniciar el cronómetro de la serie (DESCENDENTE)
+		cronometroSerie = new CronometroThread(lblTiempoSerie, serieActual.getTiempoSerie(), false);
+		cronometroSerie.setPanel(this);
+		threadCronometroSerie = new Thread(cronometroSerie);
+		threadCronometroSerie.start();
 
 		SwingUtilities.invokeLater(() -> {
 			btnControl.setText("PAUSAR");
@@ -209,9 +236,25 @@ public class EjercicioPanel extends JPanel {
 		});
 	}
 
+	private void marcarSerieActiva(int indiceSerieActual2) {
+		// Hay que mirar como resetear todos los botones
+
+		// Marcar la serie activa
+		if (indiceSerieActual2 == 0) {
+			styleSerieButton(btnSerie1, true);
+		} else if (indiceSerieActual2 == 1) {
+			styleSerieButton(btnSerie2, true);
+		} else if (indiceSerieActual2 == 2) {
+			styleSerieButton(btnSerie3, true);
+		}
+
+	}
+
 	// Pausa el ejercicio :P
 	private void pausarEjercicio() {
 		enPausa = true;
+		cronometroTotal.pausar();
+		cronometroSerie.pausar();
 
 		SwingUtilities.invokeLater(() -> {
 			btnControl.setText("REANUDAR");
@@ -219,21 +262,20 @@ public class EjercicioPanel extends JPanel {
 		});
 
 	}
-	
+
 	public void alFinalizarSerie() {
 		ArrayList<Serie> series = ejercicioActual.getSeries();
 		Serie serieActual = series.get(indiceSerieActual);
-		
+
 		marcarSerieComoCompletada(serieActual);
-		
+
 		System.out.println("Serie finalizada: " + indiceSerieActual);
-		// Aquí puedes manejar lo que sucede al finalizar una serie
-		// Por ejemplo, iniciar el cronómetro de descanso
+		// Aquí hay que manejar lo que sucede al finalizar una serie
 	}
-	
+
 	private void marcarSerieComoCompletada(Serie serieActual) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	// Pasa al siguiente ejercicio :P
@@ -300,8 +342,8 @@ public class EjercicioPanel extends JPanel {
 	// Mensaje motivacional al salir del ejercicio
 	private String mensajeMotivacional() {
 		String[] mensajes = { "Mensaje motivacional 1", "Mensaje motivacional 2", "Mensaje motivacional 3", };
-		int indice = (int) (Math.random() * mensajes.length);
-		return mensajes[indice];
+		int mensaje = (int) (Math.random() * mensajes.length);
+		return mensajes[mensaje];
 
 	}
 

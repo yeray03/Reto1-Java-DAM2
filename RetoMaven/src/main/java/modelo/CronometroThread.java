@@ -68,8 +68,8 @@ public class CronometroThread implements Runnable {
 						if (segundos <= 0) {
 							enEjecucion = false;
 							if (panel != null) {
-								//Una flecha?->->->-> enserio? ->->->->
-								//Funciona, no se hacen preguntas
+								// Una flecha?->->->-> enserio? ->->->->
+								// Funciona, no se hacen preguntas
 								SwingUtilities.invokeLater(() -> panel.alFinalizarSerie());
 							}
 						}
