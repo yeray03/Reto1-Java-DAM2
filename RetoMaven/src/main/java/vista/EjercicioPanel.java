@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -20,9 +19,7 @@ import javax.swing.border.TitledBorder;
 
 import modelo.CronometroDescansoThread;
 import modelo.CronometroThread;
-import modelo.dao.HistoricoDAO;
 import pojos.Ejercicio;
-import pojos.Historico;
 import pojos.Serie;
 import pojos.Usuario;
 import pojos.Workout;
@@ -202,6 +199,7 @@ public class EjercicioPanel extends JPanel {
 		} else {
 			// Reanuda la serie actual
 			cronometroSerie.reanudar();
+			cronometroDescanso.reanudar();
 		}
 
 	}
@@ -242,7 +240,7 @@ public class EjercicioPanel extends JPanel {
 		styleSerieButton(btnSerie1, false);
 		styleSerieButton(btnSerie2, false);
 		styleSerieButton(btnSerie3, false);
-		
+
 		// Marcar la serie activa
 		if (indiceSerieActual2 == 0) {
 			styleSerieButton(btnSerie1, true);
@@ -259,6 +257,7 @@ public class EjercicioPanel extends JPanel {
 		enPausa = true;
 		cronometroTotal.pausar();
 		cronometroSerie.pausar();
+		cronometroDescanso.pausar();
 
 		SwingUtilities.invokeLater(() -> {
 			btnControl.setText("REANUDAR");
@@ -271,19 +270,45 @@ public class EjercicioPanel extends JPanel {
 		ArrayList<Serie> series = ejercicioActual.getSeries();
 		Serie serieActual = series.get(indiceSerieActual);
 
+		System.out.println("Serie finalizada: " + serieActual.getNombre());
+
+		// Marcar la serie como completada VISUALMENTE
 		marcarSerieComoCompletada(serieActual);
 
-		System.out.println("Serie finalizada: " + serieActual.getNombre());
-		
 		// Aquí hay que manejar lo que sucede al finalizar una serie
 		indiceSerieActual++;
+
+		// Verificar si hay más series
+		if (indiceSerieActual < series.size()) {
+			//Hay mas series, iniciar descanso
+			iniciarDescanso(serieActual.getTiempoDescanso());
+		} else {
+			//No hay mas series, ejercicio completado
+			System.out.println("Exerxixio completatedo: " + ejercicioActual.getNombre());
+			ejercicioCompletado = true;
+			manejarBotonControl();
+		}
+	}
+
+	private void iniciarDescanso(int tiempoDescanso) {
+		if (tiempoDescanso <= 0)
+			iniciarSiguienteSerie();
+
+		System.out.println("Iniciando descanso de " + tiempoDescanso + " segundos");
+
+		// TODO: Meter aqui el cronometro de descanso
 	}
 
 	private void marcarSerieComoCompletada(Serie serieActual) {
 		JButton boton = null;
-		
+
 		boton.setBackground(new Color(34, 139, 34));
 		boton.setForeground(Color.WHITE);
+	}
+	
+	//Actualizar el boton de los ejercicios
+	private void actualizarBotonControl() {
+		
 	}
 
 	// Pasa al siguiente ejercicio :P
@@ -298,6 +323,7 @@ public class EjercicioPanel extends JPanel {
 		ArrayList<Serie> series = ejercicioActual.getSeries();
 
 		if (series == null || series.isEmpty()) {
+			return;
 		}
 
 		if (series.size() > 0) {
@@ -335,11 +361,23 @@ public class EjercicioPanel extends JPanel {
 //        return series;
 //    }
 
+	// Formatear segundos a mm:ss
+	private String formatearTiempo(int segundos) {
+		int minutos = segundos / 60;
+		int segundosRestantes = segundos % 60;
+		return String.format("%02d:%02d", minutos, segundosRestantes);
+	}
+
 	// Voy a usar esto para parar todos los cronometros cuando salga del ejercicio
 	// En un futuro
 	// Lejano
 	// Y creo que para guardar el historico
 	private void salirDelEjercicio(JFrame frame) {
+		// Parar los cronometros
+		cronometroTotal.detener();
+		cronometroSerie.detener();
+
+		// Guardar el historico y muestrar mensaje motivacional
 		String mensaje = mensajeMotivacional();
 		frame.setContentPane(new WorkoutsPanel(frame, usuario));
 		frame.revalidate();
@@ -355,6 +393,7 @@ public class EjercicioPanel extends JPanel {
 
 	}
 
+	// Estilo para las series
 	private void styleSerieButton(JButton boton, boolean activa) {
 		boton.setHorizontalAlignment(JButton.LEFT);
 		boton.setForeground(Color.WHITE);

@@ -27,7 +27,11 @@ public class CronometroThread implements Runnable {
 		this.enEjecucion = true;
 		this.enPausa = false;
 	}
-
+	
+	/**
+	 * Establece el panel para notificar cuando finalice el descanso
+	 * @param panel Panel de ejercicio
+	 */
 	public void setPanel(EjercicioPanel panel) {
 		this.panel = panel;
 	}
