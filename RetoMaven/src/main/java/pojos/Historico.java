@@ -1,12 +1,12 @@
 package pojos;
 
-import java.util.Date;
 
 public class Historico {
 	private String workoutNombre;
 	private int nivel;
-	private Date fecha;
+	private String fecha;
 	private int tiempoTotal;
+	private int tiempoPrevisto;
 	private int ejerciciosCompletados;
 	private int ejerciciosTotales;
 	private double porcentajeCompletado;
@@ -14,12 +14,13 @@ public class Historico {
 	public Historico() {
 	}
 
-	public Historico(String workoutNombre, int nivel, Date fecha, int tiempoTotal, int ejerciciosCompletados,
+	public Historico(String workoutNombre, int nivel, String fecha, int tiempoTotal, int tiempoPrevisto, int ejerciciosCompletados,
 			int ejerciciosTotales) {
 		this.workoutNombre = workoutNombre;
 		this.nivel = nivel;
 		this.fecha = fecha;
 		this.tiempoTotal = tiempoTotal;
+		this.tiempoPrevisto = tiempoPrevisto;
 		this.ejerciciosCompletados = ejerciciosCompletados;
 		this.ejerciciosTotales = ejerciciosTotales;
 		this.porcentajeCompletado = ejerciciosTotales > 0 ? (ejerciciosCompletados * 100.0 / ejerciciosTotales) : 0;
@@ -41,11 +42,11 @@ public class Historico {
 		this.nivel = nivel;
 	}
 
-	public Date getFecha() {
+	public String getFecha() {
 		return fecha;
 	}
 
-	public void setFecha(Date fecha) {
+	public void setFecha(String fecha) {
 		this.fecha = fecha;
 	}
 
@@ -55,6 +56,13 @@ public class Historico {
 
 	public void setTiempoTotal(int tiempoTotal) {
 		this.tiempoTotal = tiempoTotal;
+	}
+	
+	public int getTiempoPrevisto() {
+		return tiempoPrevisto;
+	}
+	public void setTiempoPrevisto(int tiempoPrevisto) {
+		this.tiempoPrevisto = tiempoPrevisto;
 	}
 
 	public int getEjerciciosCompletados() {
@@ -84,7 +92,7 @@ public class Historico {
 	@Override
 	public String toString() {
 		return "Historico [workoutNombre=" + workoutNombre + ", nivel=" + nivel + ", fecha=" + fecha + ", tiempoTotal="
-				+ tiempoTotal + ", ejerciciosCompletados=" + ejerciciosCompletados + ", ejerciciosTotales="
+				+ tiempoTotal + ", tiempoPrevisto=" + tiempoPrevisto + ", ejerciciosCompletados=" + ejerciciosCompletados + ", ejerciciosTotales="
 				+ ejerciciosTotales + ", porcentajeCompletado=" + porcentajeCompletado + "]";
 	}
 }

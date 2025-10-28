@@ -1,10 +1,11 @@
 package controlador;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-
 import modelo.dao.UsuarioDAO;
 import pojos.Usuario;
+import pojos.Historico;
 
 public class UsuarioControlador {
 
@@ -34,4 +35,5 @@ public class UsuarioControlador {
 		Usuario ret = usuarioDAO.buscarUsuarioPorNick(nickname);
 		return ret;
 	}
+
 }

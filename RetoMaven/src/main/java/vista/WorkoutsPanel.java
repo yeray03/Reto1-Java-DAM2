@@ -20,6 +20,9 @@ import controlador.WorkoutControlador;
 import pojos.Ejercicio;
 import pojos.Usuario;
 import pojos.Workout;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class WorkoutsPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -78,7 +81,7 @@ public class WorkoutsPanel extends JPanel {
 		WorkoutControlador controlador = WorkoutControlador.getInstanceControlador();
 		workouts = controlador.getWorkoutsHastaNivel(usuario.getNivel());
 
-		// Initialize travelModel and travelTable
+		// Crear el modelo de la tabla
 		workoutModel = new DefaultTableModel(new Object[] { "Nombre", "Nivel", "Numero de ejercicios", "Video" }, 0) {
 			private static final long serialVersionUID = 1L; // si no lo pongo da warning
 
@@ -87,7 +90,7 @@ public class WorkoutsPanel extends JPanel {
 				return false; // Ninguna celda será editable
 			}
 		};
-		//
+		// Crear la tabla con el modelo
 		table = new JTable(workoutModel);
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setFocusable(false); // asi no muestra el cuadrado del focus al pulsar una celda
@@ -105,6 +108,18 @@ public class WorkoutsPanel extends JPanel {
 		add(scrollPane);
 
 		comboBox.addActionListener(e -> actualizarTablaPorNivel(controlador, comboBox));
+		
+		JButton btnHistorico = new JButton("Historico de Workouts");
+		btnHistorico.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				frame.setContentPane(new HistoricoWorkoutsPanel(frame, usuario));
+				frame.validate();
+				
+			}
+		});
+		btnHistorico.setBounds(416, 81, 170, 21);
+		add(btnHistorico);
 
 		table.addMouseListener(new MouseAdapter() {
 			@Override
@@ -150,7 +165,7 @@ public class WorkoutsPanel extends JPanel {
 	private void actualizarTablaPorNivel(WorkoutControlador controlador, JComboBox<String> comboBox) {
 
 		if (comboBox.getSelectedItem().toString() != "Default") {
-			// cargar todos los workouts
+			// cargar todos los workouts de ese nivel
 			workoutModel.setRowCount(0); // limpiar tabla
 			workouts = controlador.getWorkoutsPorNivel(Integer.parseInt(comboBox.getSelectedItem().toString()));
 			if (workouts != null) {
@@ -162,7 +177,7 @@ public class WorkoutsPanel extends JPanel {
 			}
 
 		} else {
-			// cargar todos los workouts
+			// cargar todos los workouts hasta el nivel del usuario
 			workoutModel.setRowCount(0); // limpiar tabla
 			workouts = controlador.getWorkoutsHastaNivel(usuario.getNivel());
 			if (workouts != null) {
@@ -175,5 +190,4 @@ public class WorkoutsPanel extends JPanel {
 		}
 
 	}
-
 }
