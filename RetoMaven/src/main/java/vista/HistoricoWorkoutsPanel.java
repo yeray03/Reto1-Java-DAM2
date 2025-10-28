@@ -9,12 +9,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-
 import controlador.HistoricoControlador;
-import controlador.WorkoutControlador;
 import pojos.Historico;
 import pojos.Usuario;
-import pojos.Workout;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -36,8 +33,7 @@ public class HistoricoWorkoutsPanel extends JPanel {
 
 		setBackground(Color.decode("#232637"));
 
-		JLabel lblNewLabel = new JLabel(
-				"Historial de Workouts de " + usuario.getNickname().toUpperCase());
+		JLabel lblNewLabel = new JLabel("Historial de Workouts de " + usuario.getNickname().toUpperCase());
 		lblNewLabel.setForeground(new Color(255, 255, 255));
 		lblNewLabel.setBackground(new Color(255, 255, 255));
 		lblNewLabel.setBounds(20, 11, 288, 21);
@@ -78,7 +74,7 @@ public class HistoricoWorkoutsPanel extends JPanel {
 
 		scrollPane.setBounds(20, 114, 879, 301);
 		add(scrollPane);
-		
+
 		// Botón Atrás
 		JButton btnAtras = new JButton("Atrás");
 		btnAtras.addActionListener(new ActionListener() {

@@ -13,6 +13,7 @@ import modelo.FirebaseInitialize;
 import pojos.Usuario;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class UsuarioDAO extends FirebaseInitialize {
@@ -31,14 +32,14 @@ public class UsuarioDAO extends FirebaseInitialize {
 		// Email en minúsculas para consistencia
 		String emailNormalizado = usuario.getEmail().toLowerCase().trim();
 		usuario.setEmail(emailNormalizado);
-		
+
 		String nickname = usuario.getNickname().trim();
 		usuario.setNickname(nickname);
 
 		db.collection("usuarios").document(nickname).set(usuario);
 	}
 
-	//Busca el usuario por nickname
+	// Busca el usuario por nickname
 	public Usuario buscarUsuarioPorNick(String nickname) throws IOException, ExecutionException, InterruptedException {
 		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
 
@@ -53,7 +54,22 @@ public class UsuarioDAO extends FirebaseInitialize {
 		}
 		return null;
 	}
-	
+
+	// Obtiene todos los usuarios de la base de datos
+	public ArrayList<Usuario> obtenerTodosUsuarios() throws IOException, ExecutionException, InterruptedException {
+		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
+		ArrayList<Usuario> listaUsuarios = new ArrayList<>();
+
+		ApiFuture<QuerySnapshot> snapshot = db.collection("usuarios").get();
+		QuerySnapshot querySnapshot = snapshot.get();
+
+		for (DocumentSnapshot documento : querySnapshot.getDocuments()) {
+			Usuario usuario = documento.toObject(Usuario.class);
+			listaUsuarios.add(usuario);
+		}
+		return listaUsuarios;
+	}
+
 	// Guarda el usuario en la base de datos
 	public void guardarUsuario(Usuario usuario) {
 		DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuarios");

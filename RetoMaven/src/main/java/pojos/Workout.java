@@ -1,15 +1,16 @@
 package pojos;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Workout {
+public class Workout implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private ArrayList<Ejercicio> ejercicios;
 	private String nombre;
 	private int nivel;
 	private int numEjercicios;
 	private String videoUrl;
-	
-	
+
 	public ArrayList<Ejercicio> getEjercicios() {
 		return ejercicios;
 	}

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
@@ -24,20 +23,26 @@ public class WorkoutDAO extends FirebaseInitialize {
 		super();
 	}
 
-	private CollectionReference getWorkouts() throws IOException {
+	public ArrayList<Workout> obtenerTodosWorkouts() throws IOException, ExecutionException, InterruptedException {
 		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
-		if (db == null) {
-			throw new IOException("Firestore is not initialized.");
+		ArrayList<Workout> listaWorkouts = new ArrayList<>();
+
+		ApiFuture<QuerySnapshot> snapshot = db.collection("workouts").get();
+		QuerySnapshot querySnapshot = snapshot.get();
+
+		for (DocumentSnapshot documento : querySnapshot.getDocuments()) {
+			Workout workout = mapDocumentToWorkout(documento);
+			listaWorkouts.add(workout);
 		}
-		return db.collection("workouts");
+		return listaWorkouts;
 	}
 
 	public ArrayList<Workout> getWorkoutsByLevel(int level)
 			throws IOException, InterruptedException, ExecutionException {
-		CollectionReference workoutsRef = getWorkouts();
-		ApiFuture<QuerySnapshot> query = workoutsRef.whereEqualTo("nivel", level).get();
+		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
+		ApiFuture<QuerySnapshot> query = db.collection("workouts").whereEqualTo("nivel", level).get();
 		QuerySnapshot querySnapshot = query.get();
-		
+
 		ArrayList<Workout> workouts = new ArrayList<Workout>();
 		for (DocumentSnapshot document : querySnapshot.getDocuments()) {
 			Workout workout = mapDocumentToWorkout(document);
@@ -50,10 +55,10 @@ public class WorkoutDAO extends FirebaseInitialize {
 
 	public ArrayList<Workout> getWorkoutUntilLevel(int level)
 			throws IOException, InterruptedException, ExecutionException {
-		CollectionReference workoutsRef = getWorkouts();
-		ApiFuture<QuerySnapshot> query = workoutsRef.whereLessThanOrEqualTo("nivel", level).get();
+		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
+		ApiFuture<QuerySnapshot> query = db.collection("workouts").whereLessThanOrEqualTo("nivel", level).get();
 		QuerySnapshot querySnapshot = query.get();
-		
+
 		ArrayList<Workout> workouts = new ArrayList<Workout>();
 		for (DocumentSnapshot document : querySnapshot.getDocuments()) {
 			Workout workout = mapDocumentToWorkout(document);
@@ -63,35 +68,37 @@ public class WorkoutDAO extends FirebaseInitialize {
 		}
 		return workouts;
 	}
-	
-	// Mapea un DocumentSnapshot a un objeto Workout, resolviendo las referencias a Ejercicio
-	//OTRA FUNCION QUE FUNCIONA GRACIAS A REZARLE AL SEÑOR
-	//Y A QUE FIREBASE ES LO MEJOR QUE BIEEEEN
-	//ME QUIERO SUIC
+
+	// Mapea un DocumentSnapshot a un objeto Workout, resolviendo las referencias a
+	// Ejercicio
+	// OTRA FUNCION QUE FUNCIONA GRACIAS A REZARLE AL SEÑOR
+	// Y A QUE FIREBASE ES LO MEJOR QUE BIEEEEN
+	// ME QUIERO SUIC
+	// Yeray: gracias por quitarme un dolor de cabeza :3
 	private Workout mapDocumentToWorkout(DocumentSnapshot document) {
 		try {
 			Workout workout = new Workout();
-			
+
 			String nombre = document.getString("nombre");
 			Long nivelLong = document.getLong("nivel");
 			Long numEjerciciosLong = document.getLong("numEjercicios");
 			String videoUrl = document.getString("videoUrl");
-			
+
 			workout.setNombre(nombre != null ? nombre : "");
 			workout.setNivel(nivelLong != null ? nivelLong.intValue() : 0);
 			workout.setNumEjercicios(numEjerciciosLong != null ? numEjerciciosLong.intValue() : 0);
 			workout.setUrlVideo(videoUrl != null ? videoUrl : "");
-			
+
 			@SuppressWarnings("unchecked")
 			List<DocumentReference> ejerciciosRefs = (List<DocumentReference>) document.get("ejercicios");
 			ArrayList<Ejercicio> ejercicios = new ArrayList<>();
-			
+
 			if (ejerciciosRefs != null && !ejerciciosRefs.isEmpty()) {
 				for (DocumentReference ref : ejerciciosRefs) {
 					try {
 						ApiFuture<DocumentSnapshot> ejercicioFuture = ref.get();
 						DocumentSnapshot ejercicioDoc = ejercicioFuture.get();
-						
+
 						if (ejercicioDoc.exists()) {
 							Ejercicio ejercicio = ejercicioDoc.toObject(Ejercicio.class);
 							if (ejercicio != null) {
@@ -104,10 +111,10 @@ public class WorkoutDAO extends FirebaseInitialize {
 					}
 				}
 			}
-			
+
 			workout.setEjercicios(ejercicios);
 			return workout;
-			
+
 		} catch (Exception e) {
 			System.err.println("Error al mapear workout del documento: " + document.getId());
 			e.printStackTrace();

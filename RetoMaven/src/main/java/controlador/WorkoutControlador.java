@@ -1,6 +1,8 @@
 package controlador;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import modelo.dao.WorkoutDAO;
 import pojos.Workout;
@@ -18,15 +20,17 @@ public class WorkoutControlador {
 		return controlador;
 	}
 
-	public ArrayList<Workout> getWorkouts() {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Workout> getWorkouts() throws IOException, ExecutionException, InterruptedException {
+		ArrayList<Workout> ret = new ArrayList<Workout>();
+		WorkoutDAO workoutDAO = new WorkoutDAO();
+		ret = workoutDAO.obtenerTodosWorkouts();
+		return ret;
 	}
 
 	public ArrayList<Workout> getWorkoutsHastaNivel(int nivel) {
 		ArrayList<Workout> ret = new ArrayList<Workout>();
 		WorkoutDAO workoutDAO = new WorkoutDAO();
-		
+
 		try {
 			ret = workoutDAO.getWorkoutUntilLevel(nivel);
 			return ret;
@@ -34,13 +38,13 @@ public class WorkoutControlador {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
-	
+
 	public ArrayList<Workout> getWorkoutsPorNivel(int nivel) {
 		ArrayList<Workout> ret = new ArrayList<Workout>();
 		WorkoutDAO workoutDAO = new WorkoutDAO();
-		
+
 		try {
 			ret = workoutDAO.getWorkoutsByLevel(nivel);
 			return ret;
@@ -48,12 +52,13 @@ public class WorkoutControlador {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
+
 	public ArrayList<Workout> getWorkoutsUntilNivel(int nivel) {
 		ArrayList<Workout> ret = new ArrayList<Workout>();
 		WorkoutDAO workoutDAO = new WorkoutDAO();
-		
+
 		try {
 			ret = workoutDAO.getWorkoutsByLevel(nivel);
 			return ret;
@@ -61,7 +66,7 @@ public class WorkoutControlador {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
-	
+
 }

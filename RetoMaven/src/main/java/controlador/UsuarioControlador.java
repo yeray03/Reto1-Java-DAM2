@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import modelo.dao.UsuarioDAO;
 import pojos.Usuario;
-import pojos.Historico;
 
 public class UsuarioControlador {
 
@@ -34,6 +33,11 @@ public class UsuarioControlador {
 	public Usuario buscarPorNick(String nickname) throws IOException, ExecutionException, InterruptedException {
 		Usuario ret = usuarioDAO.buscarUsuarioPorNick(nickname);
 		return ret;
+	}
+	
+	public ArrayList<Usuario> obtenerTodosUsuarios() throws IOException, ExecutionException, InterruptedException {
+		ArrayList<Usuario> usuarios = usuarioDAO.obtenerTodosUsuarios();
+		return usuarios;
 	}
 
 }

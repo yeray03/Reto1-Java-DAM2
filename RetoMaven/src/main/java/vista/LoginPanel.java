@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import controlador.UsuarioControlador;
+import gestor.GestorFicheros;
 import pojos.Usuario;
 import javax.swing.ImageIcon;
 
@@ -25,7 +26,6 @@ public class LoginPanel extends JPanel {
 	private JPasswordField passwordField;
 	private JButton loginButton;
 	private JButton registerButton;
-
 	private JLabel logoLabel;
 
 	public LoginPanel(JFrame frame) {
@@ -112,9 +112,7 @@ public class LoginPanel extends JPanel {
 						JOptionPane.ERROR_MESSAGE);
 			} else {
 				try {
-
 					UsuarioControlador controlador = UsuarioControlador.getInstance();
-
 					Usuario usuario = controlador.buscarPorNick(nickname);
 
 					if (usuario == null) {
@@ -128,20 +126,20 @@ public class LoginPanel extends JPanel {
 						JOptionPane.showMessageDialog(this, "Login correcto. ¡Bienvenido/a " + usuario.getNickname(),
 								"Login", JOptionPane.INFORMATION_MESSAGE);
 						// Cambiar de pantalla
+						GestorFicheros gestor = GestorFicheros.getInstance();
+						gestor.guardarDatos();
 						frame.setContentPane(new WorkoutsPanel(frame, usuario));
 						frame.validate();
 					}
 				} catch (IOException ex) {
-
 					ex.printStackTrace();
 				} catch (ExecutionException ee) {
-
 					ee.printStackTrace();
 				} catch (InterruptedException ie) {
-
 					ie.printStackTrace();
 				}
 			}
+
 		});
 
 	}
