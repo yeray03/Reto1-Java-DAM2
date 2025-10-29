@@ -202,21 +202,21 @@ public class EjercicioPanel extends JPanel {
 			cronometroTotal.reanudar();
 		}
 
-		// Inicia la primera serie si es la primera vez
-		if (indiceSerieActual == 0) {
-			iniciarSiguienteSerie();
-			return;
+		// Verifica si ya hay un cronómetro de serie activo
+		if (cronometroSerie != null && cronometroSerie.isRunning()) {
+			// Ya existe un cronómetro pausado, solo reanudarlo
+			System.out.println("Reanudando cronómetro de serie existente");
+			cronometroSerie.reanudar();
+		} else if (cronometroDescanso != null && cronometroDescanso.isRunning()) {
+			// Está en descanso, reanudarlo
+			System.out.println("Reanudando cronómetro de descanso");
+			cronometroDescanso.reanudar();
 		} else {
-			// Reanuda la serie actual
-			if (cronometroSerie != null) {
-				cronometroSerie.reanudar();
-			}
-
-			if (cronometroDescanso != null) {
-				cronometroDescanso.reanudar();
-			}
+			// No hay cronómetro activo, iniciar nueva serie
+			System.out.println("Iniciando nueva serie");
+			iniciarSiguienteSerie();
 		}
-		
+
 		btnControl.setText("PAUSAR");
 		btnControl.setBackground(new Color(220, 60, 60));
 
@@ -446,14 +446,35 @@ public class EjercicioPanel extends JPanel {
 		mostrarResumenFinal(workoutCompletado);
 	}
 
-	private void mostrarResumenFinal(boolean workoutCompletado) {
+	private void mostrarResumenFinal(boolean completado) {
 		// Guarda histórico solo si se ha completado el workout
-		if (workoutCompletado) {
+		if (completado) {
 			guardarHistorico();
 		}
 
-		detenerCronometros();
-		guardarHistorico();
+		// Calcular tiempo previsto
+		int tiempoPrevisto = calcularTiempoPrevisto();
+		
+		// Calcular tiempo total
+		int tiempoTotal = 0;
+		if (cronometroTotal != null) {
+		    tiempoTotal = cronometroTotal.getSegundos();
+		}
+		
+		// Crear y mostrar diálogo de resumen
+	    ResumenWorkout dialogo = new ResumenWorkout(
+	        JFrame,
+	        completado,
+	        workout.getNombre(),
+	        tiempoTotal,
+	        tiempoPrevisto,
+	        indiceEjercicioActual,
+	        workout.getNumEjercicios()
+	    );
+	    
+		// Después de cerrar el diálogo, volver a WorkoutsPanel
+		JFrame.setContentPane(new WorkoutsPanel(JFrame, usuario));
+		JFrame.revalidate();
 	}
 
 	private void guardarHistorico() {

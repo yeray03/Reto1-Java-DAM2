@@ -2,7 +2,6 @@ package controlador;
 
 import java.util.ArrayList;
 
-import modelo.dao.UsuarioDAO;
 import pojos.Historico;
 import pojos.Usuario;
 import modelo.dao.HistoricoDAO;
