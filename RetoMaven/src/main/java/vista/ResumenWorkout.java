@@ -12,14 +12,11 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 public class ResumenWorkout extends JDialog {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public ResumenWorkout(JFrame parent, boolean completado, String workoutNombre, int tiempoTotal, int tiempoPrevisto,
 			int ejerciciosCompletados, int ejerciciosTotales) {
+
 		// Inicializa el diálogo con los parámetros necesarios
 		super(parent, "Resumen del Workout", true);
 
@@ -37,7 +34,7 @@ public class ResumenWorkout extends JDialog {
 		lblTitulo.setBounds(20, 20, 410, 40);
 
 		if (completado) {
-			lblTitulo.setText("¡Workout Completado!");
+			lblTitulo.setText("¡Workout Completado! 🎉");
 			lblTitulo.setForeground(new Color(99, 179, 92));
 		} else {
 			lblTitulo.setText("Workout Interrumpido");
@@ -53,24 +50,54 @@ public class ResumenWorkout extends JDialog {
 		lblWorkout.setBounds(20, 70, 410, 30);
 		getContentPane().add(lblWorkout);
 
-		// Tiempo previsto
+		// Tiempo total
+		JLabel lblTiempoTotal = new JLabel("Tiempo Total: " + formatearTiempo(tiempoTotal));
+		lblTiempoTotal.setFont(new Font("Arial", Font.PLAIN, 16));
+		lblTiempoTotal.setForeground(Color.WHITE);
+		lblTiempoTotal.setBounds(60, 120, 350, 25);
+		getContentPane().add(lblTiempoTotal);
+
+		// Tiempo previsto (solo si completó)
+		if (completado) {
+			JLabel lblTiempoPrevisto = new JLabel("Tiempo Previsto: " + formatearTiempo(tiempoPrevisto));
+			lblTiempoPrevisto.setFont(new Font("Arial", Font.PLAIN, 16));
+			lblTiempoPrevisto.setForeground(Color.WHITE);
+			lblTiempoPrevisto.setBounds(60, 155, 350, 25);
+			getContentPane().add(lblTiempoPrevisto);
+
+			// Diferencia de tiempo
+			int diferencia = tiempoTotal - tiempoPrevisto;
+			String textoTiempo = diferencia > 0 ? "Te tomó " + formatearTiempo(Math.abs(diferencia)) + " más"
+					: "Lo hiciste" + formatearTiempo(Math.abs(diferencia)) + " más rápido!";
+
+			JLabel lblDiferencia = new JLabel(textoTiempo);
+			lblDiferencia.setFont(new Font("Arial", Font.ITALIC, 14));
+			lblDiferencia.setForeground(diferencia > 0 ? new Color(255, 165, 0) : new Color(99, 179, 92));
+			lblDiferencia.setBounds(60, 190, 350, 25);
+			getContentPane().add(lblDiferencia);
+		}
 
 		// Ejercicios completados
 		int porcentaje = ejerciciosTotales > 0 ? (ejerciciosCompletados * 100 / ejerciciosTotales) : 0;
 
 		JLabel lblEjercicios = new JLabel(
-				String.format("Ejercicios: %d/%d (%.1f%%)", ejerciciosCompletados, ejerciciosTotales, porcentaje));
+			    String.format("Ejercicios: %d/%d (%d%%)", ejerciciosCompletados, ejerciciosTotales, porcentaje));
+
 		lblEjercicios.setFont(new Font("Arial", Font.PLAIN, 16));
 		lblEjercicios.setForeground(Color.WHITE);
-		lblEjercicios.setBounds(60, 35, 350, 25);
+		lblEjercicios.setBounds(60, completado ? 225 : 155, 350, 25);
 		getContentPane().add(lblEjercicios);
 
 		// Mensaje motivacional
 		JLabel lblMensaje = new JLabel();
 		lblMensaje.setHorizontalAlignment(SwingConstants.CENTER);
-		lblMensaje.setFont(new Font("Arial", Font.ITALIC, 14));
+		lblMensaje.setFont(new Font("Arial", Font.ITALIC, 20));
 		lblMensaje.setForeground(new Color(180, 180, 180));
-		lblMensaje.setBounds(20, 45, 410, 50);
+		lblMensaje.setBounds(20, completado ? 270 : 210, 410, 50);
+
+		lblMensaje.setText("<html><center>" + mensajeMotivacional() + "</center></html>");
+
+		getContentPane().add(lblMensaje);
 
 		// Botón Aceptar
 		JButton btnAceptar = new JButton("Aceptar");

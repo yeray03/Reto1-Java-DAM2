@@ -5,20 +5,12 @@ import java.awt.Color;
 
 import vista.EjercicioPanel;
 
-//1. Empieza a contar desde "segundosDescanso"
-//2. Cada segundo:
-//   - Actualiza el JTextArea con el tiempo
-//   - Resta 1 segundo
-//   - Si quedan menos de 5 segundos pone texto en rojo
-//3. Si llega a 0 llama a "alFinalizarDescanso()"
-//4. Se puede pausar, reanudar y detener
-
 public class CronometroDescansoThread implements Runnable {
 
 	private JTextArea textArea;
 	private int segundos;
-	private boolean running;
-	private boolean pausado;
+	private volatile boolean running;
+	private volatile boolean pausado;
 	private EjercicioPanel panel;
 
 	public CronometroDescansoThread(JTextArea textArea, int segundosDescanso) {
@@ -43,7 +35,13 @@ public class CronometroDescansoThread implements Runnable {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					running = false;
+					System.out.println("Cronómetro descanso interrumpido");
+					running = false;  // ⬅️ Detener si es interrumpido
+					break;
+				}
+
+				// Verificar si sigue corriendo después del sleep
+				if (!running) {
 					break;
 				}
 
@@ -54,16 +52,24 @@ public class CronometroDescansoThread implements Runnable {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					running = false;
+					System.out.println("Cronómetro descanso interrumpido en pausa");
+					running = false;  // ⬅️ Detener si es interrumpido
+					break;
+				}
+
+				// Verifica si fue detenido mientras estaba pausado
+				if (!running) {
 					break;
 				}
 			}
 		}
 
-		// Si terminó el tiempo, avisar al panel
+		// Si terminó el tiempo Y sigue corriendo, avisar al panel
 		if (segundos <= 0 && running) {
 			finalizarDescanso();
 		}
+		
+		System.out.println("Hilo de descanso finalizado");
 	}
 
 	private void actualizarTextArea() {

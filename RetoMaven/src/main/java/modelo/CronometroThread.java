@@ -5,20 +5,14 @@ import java.awt.Color;
 
 import vista.EjercicioPanel;
 
-//1. Empieza a contar desde "segundosInicial"
-//2. Cada segundo:
-//   - Actualiza el JLabel con el tiempo
-//   - Si va hacia arriba → suma 1
-//   - Si va hacia abajo → resta 1
-//3. Si llega a 0 llama a "alFinalizarSerie()"
-//4. Se puede pausar, reanudar y detener
-
 public class CronometroThread implements Runnable {
 
 	private JLabel label;
 	private int segundos;
-	private boolean running;
-	private boolean pausado;
+	// VOLATILE cuando un thread cambie running = false, todos los demás threads
+	// vean el cambio inmediatamente.
+	private volatile boolean running;
+	private volatile boolean pausado;
 	private boolean ascendente;
 	private EjercicioPanel panel;
 
@@ -45,7 +39,13 @@ public class CronometroThread implements Runnable {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
+					System.out.println("Cronómetro interrumpido");
 					running = false;
+					break;
+				}
+
+				// Verificar si sigue corriendo
+				if (!running) {
 					break;
 				}
 
@@ -67,11 +67,19 @@ public class CronometroThread implements Runnable {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
+					System.out.println("Cronómetro interrumpido en pausa");
 					running = false;
+					break;
+				}
+
+				// Verifica si fue detenido mientras estaba pausado
+				if (!running) {
 					break;
 				}
 			}
 		}
+
+		System.out.println("Hilo de cronómetro finalizado");
 	}
 
 	private void actualizarLabel() {
