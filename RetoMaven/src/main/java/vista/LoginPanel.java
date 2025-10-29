@@ -127,7 +127,7 @@ public class LoginPanel extends JPanel {
 								"Login", JOptionPane.INFORMATION_MESSAGE);
 						// Cambiar de pantalla
 						GestorFicheros gestor = GestorFicheros.getInstance();
-						gestor.guardarDatos();
+						gestor.guardarDatos(); // BACKUP DE DATOS AL INICIAR SESIÓN
 						frame.setContentPane(new WorkoutsPanel(frame, usuario));
 						frame.validate();
 					}

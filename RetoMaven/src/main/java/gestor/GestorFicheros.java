@@ -11,10 +11,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import controlador.EjercicioControlador;
+import controlador.HistoricoControlador;
 import controlador.UsuarioControlador;
 import controlador.WorkoutControlador;
 import pojos.Ejercicio;
+import pojos.Historico;
 import pojos.Usuario;
 import pojos.Workout;
 
@@ -39,10 +54,13 @@ public class GestorFicheros {
 			guardarUsuarios();
 			guardarWorkouts();
 			guardarEjercicios();
+			guardarHistorico();
+
 			// PARA LEER LOS FICHEROS CREADOS (lo pongo por si hace falta luego)
 //			leerUsuarios();
 //			leerWorkouts();
 //			leerEjercicios();
+//			leerHistorico();
 		} catch (IOException e) {
 			System.err.println("Error al crear el directorio: " + rutaDirectorio);
 			e.printStackTrace();
@@ -173,6 +191,82 @@ public class GestorFicheros {
 		}
 	}
 
+	private void guardarHistorico() {
+		try {
+			// Crear la fábrica de constructores de documentos
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			// Crear el constructor de documentos
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			// Crear el documento (en memoria)
+			Document doc = dBuilder.newDocument();
+			// Crear el elemento raíz
+			Element root = doc.createElement("historicos");
+			doc.appendChild(root); // añadir root al documento
+			// recoger todos los usuarios de la base de datos
+			UsuarioControlador controlador = UsuarioControlador.getInstance();
+			ArrayList<Usuario> usuarios = controlador.obtenerTodosUsuarios();
+			// Obtener el histórico de cada usuario
+			for (Usuario usuario : usuarios) {
+				// obtener el histórico del usuario
+				HistoricoControlador historicoControlador = HistoricoControlador.getInstance();
+				ArrayList<Historico> historicos = historicoControlador.getHistoricoUsuario(usuario);
+				// Crear el elemento hijo (usuario)
+				Element user = doc.createElement("usuario");
+				// añadir atributo "id" al elemento usuario
+				Attr attr = doc.createAttribute("id");
+				attr.setValue(String.valueOf(usuario.getNickname()));
+				user.setAttributeNode(attr);
+				// crear los elementos hijo del usuario
+				for (Historico historico : historicos) {
+					Element historicoElement = doc.createElement("historico");
+					user.appendChild(historicoElement);
+
+					Element ejerciciosCompletados = doc.createElement("ejerciciosCompletados");
+					ejerciciosCompletados
+							.appendChild(doc.createTextNode(String.valueOf(historico.getEjerciciosCompletados())));
+					historicoElement.appendChild(ejerciciosCompletados);
+					// lo mismo con los demás atributos
+					Element ejerciciosTotales = doc.createElement("ejerciciosTotales");
+					ejerciciosTotales.appendChild(doc.createTextNode(String.valueOf(historico.getEjerciciosTotales())));
+					historicoElement.appendChild(ejerciciosTotales);
+					Element fecha = doc.createElement("fecha");
+					fecha.appendChild(doc.createTextNode(historico.getFecha()));
+					historicoElement.appendChild(fecha);
+					Element nivel = doc.createElement("nivel");
+					nivel.appendChild(doc.createTextNode(String.valueOf(historico.getNivel())));
+					historicoElement.appendChild(nivel);
+					Element porcentajeCompletado = doc.createElement("porcentajeCompletado");
+					porcentajeCompletado
+							.appendChild(doc.createTextNode(String.valueOf(historico.getPorcentajeCompletado())));
+					historicoElement.appendChild(porcentajeCompletado);
+					Element tiempoPrevisto = doc.createElement("tiempoPrevisto");
+					tiempoPrevisto.appendChild(doc.createTextNode(String.valueOf(historico.getTiempoPrevisto())));
+					historicoElement.appendChild(tiempoPrevisto);
+					Element tiempoTotal = doc.createElement("tiempoTotal");
+					tiempoTotal.appendChild(doc.createTextNode(String.valueOf(historico.getTiempoTotal())));
+					historicoElement.appendChild(tiempoTotal);
+					Element workoutNombre = doc.createElement("workoutNombre");
+					workoutNombre.appendChild(doc.createTextNode(historico.getWorkoutNombre()));
+					historicoElement.appendChild(workoutNombre);
+					// añadir el histórico al usuario
+					user.appendChild(historicoElement);
+				}
+				root.appendChild(user);
+				// escribir el contenido en un fichero XML
+				TransformerFactory transformerFactory = TransformerFactory.newInstance();
+				Transformer transformer = transformerFactory.newTransformer();
+				// DOM
+				DOMSource source = new DOMSource(doc);
+				StreamResult result = new StreamResult(new File(rutaDirectorio.toString(), "historico.xml"));
+				transformer.transform(source, result);
+			}
+
+		} catch (Exception e) {
+			System.out.println("Error al guardar el histórico en el fichero XML.");
+			e.printStackTrace();
+		}
+	}
+
 	// LEER USUARIOS
 	private void leerUsuarios() {
 		File file = null;
@@ -237,6 +331,145 @@ public class GestorFicheros {
 			System.out.println("Error al leer el fichero ejercicios.dat.");
 			e.printStackTrace();
 		}
+
+	}
+
+	// LEER HISTORICO
+	private void leerHistorico() {
+		try {
+			// Crear la fabrica de constructores de documentos
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			// Parsear el fichero XML
+			Document doc = dBuilder.parse(new File(rutaDirectorio.toString(), "historico.xml"));
+			doc.getDocumentElement().normalize();
+			// ROOT
+			Element root = doc.getDocumentElement();
+			System.out.println("Elemento raíz: " + root.getNodeName());
+
+			// Obtener la lista de nodos "usuario"
+			NodeList usuarios = doc.getElementsByTagName("usuario");
+
+			// Obtener cada usuario
+			for (int i = 0; i < usuarios.getLength(); i++) {
+				Node nodoUsuario = usuarios.item(i);
+				if (nodoUsuario.getNodeType() == Node.ELEMENT_NODE) {
+					Element element = (Element) nodoUsuario;
+					System.out.println("usuario id: " + element.getAttribute("id"));
+					// Obtener la lista de nodos "historico" para este usuario
+					NodeList historicos = element.getElementsByTagName("historico");
+					// Obtener cada histórico
+					for (int j = 0; j < historicos.getLength(); j++) {
+						Node nodoHistorico = historicos.item(j);
+						if (nodoHistorico.getNodeType() == Node.ELEMENT_NODE) {
+							Element historicoElement = (Element) nodoHistorico;
+							System.out.println("Historico: ");
+							NodeList completados = historicoElement.getElementsByTagName("ejerciciosCompletados");
+							for (int k = 0; k < completados.getLength(); k++) {
+								Node nodeCompletados = completados.item(k);
+								if (nodeCompletados.getNodeType() == Node.ELEMENT_NODE) {
+									Element ejerciciosCompletadosElement = (Element) completados.item(k);
+									System.out.println(
+											"ejerciciosCompletados: " + ejerciciosCompletadosElement.getTextContent());
+									NodeList totales = historicoElement.getElementsByTagName("ejerciciosTotales");
+									for (int l = 0; l < totales.getLength(); l++) {
+										Node nodeTotales = totales.item(l);
+										if (nodeTotales.getNodeType() == Node.ELEMENT_NODE) {
+											Element ejerciciosTotalesElement = (Element) totales.item(l);
+											System.out.println(
+													"ejerciciosTotales: " + ejerciciosTotalesElement.getTextContent());
+											NodeList fechas = historicoElement.getElementsByTagName("fecha");
+											for (int m = 0; m < fechas.getLength(); m++) {
+												Node nodeFechas = fechas.item(m);
+												if (nodeFechas.getNodeType() == Node.ELEMENT_NODE) {
+													Element fechaElement = (Element) fechas.item(m);
+													System.out.println("fecha: " + fechaElement.getTextContent());
+													NodeList niveles = historicoElement.getElementsByTagName("nivel");
+													for (int n = 0; n < niveles.getLength(); n++) {
+														Node nodeNiveles = niveles.item(n);
+														if (nodeNiveles.getNodeType() == Node.ELEMENT_NODE) {
+															Element nivelElement = (Element) niveles.item(n);
+															System.out
+																	.println("nivel: " + nivelElement.getTextContent());
+															NodeList porcentajes = historicoElement
+																	.getElementsByTagName("porcentajeCompletado");
+															for (int o = 0; o < porcentajes.getLength(); o++) {
+																Node nodePorcentajes = porcentajes.item(o);
+																if (nodePorcentajes
+																		.getNodeType() == Node.ELEMENT_NODE) {
+																	Element porcentajeElement = (Element) porcentajes
+																			.item(o);
+																	System.out.println("porcentajeCompletado: "
+																			+ porcentajeElement.getTextContent());
+																	NodeList tiemposPrevistos = historicoElement
+																			.getElementsByTagName("tiempoPrevisto");
+																	for (int p = 0; p < tiemposPrevistos
+																			.getLength(); p++) {
+																		Node nodeTiemposPrevistos = tiemposPrevistos
+																				.item(p);
+																		if (nodeTiemposPrevistos
+																				.getNodeType() == Node.ELEMENT_NODE) {
+																			Element tiempoPrevistoElement = (Element) tiemposPrevistos
+																					.item(p);
+																			System.out.println("tiempoPrevisto: "
+																					+ tiempoPrevistoElement
+																							.getTextContent());
+																			NodeList tiemposTotales = historicoElement
+																					.getElementsByTagName(
+																							"tiempoTotal");
+																			for (int q = 0; q < tiemposTotales
+																					.getLength(); q++) {
+																				Node nodeTiemposTotales = tiemposTotales
+																						.item(q);
+																				if (nodeTiemposTotales
+																						.getNodeType() == Node.ELEMENT_NODE) {
+																					Element tiempoTotalElement = (Element) tiemposTotales
+																							.item(q);
+																					System.out.println("tiempoTotal: "
+																							+ tiempoTotalElement
+																									.getTextContent());
+																					NodeList workoutNombres = historicoElement
+																							.getElementsByTagName(
+																									"workoutNombre");
+																					for (int r = 0; r < workoutNombres
+																							.getLength(); r++) {
+																						Node nodeWorkoutNombres = workoutNombres
+																								.item(r);
+																						if (nodeWorkoutNombres
+																								.getNodeType() == Node.ELEMENT_NODE) {
+																							Element workoutNombreElement = (Element) workoutNombres
+																									.item(r);
+																							System.out.println(
+																									"workoutNombre: "
+																											+ workoutNombreElement
+																													.getTextContent());
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												} else {
+													System.out.println("hola borjita");
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Error al leer el fichero historico.xml.");
+			e.printStackTrace();
+		}
+
 	}
 
 }
