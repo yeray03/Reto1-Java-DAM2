@@ -5,6 +5,8 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -19,7 +21,9 @@ import javax.swing.border.TitledBorder;
 
 import modelo.CronometroDescansoThread;
 import modelo.CronometroThread;
+import modelo.dao.HistoricoDAO;
 import pojos.Ejercicio;
+import pojos.Historico;
 import pojos.Serie;
 import pojos.Usuario;
 import pojos.Workout;
@@ -45,15 +49,20 @@ public class EjercicioPanel extends JPanel {
 	private Workout workout;
 	private int indiceEjercicioActual = 0;
 	private Ejercicio ejercicioActual;
+	private ArrayList<Integer> tiemposEjercicios;
 
 	private int indiceSerieActual = 0;
 	private boolean enPausa = true;
 	private boolean ejercicioCompletado = false;
 
+	private JFrame JFrame;
+
 	public EjercicioPanel(JFrame frame, Usuario usuario, Workout workout, Ejercicio primerEjercicio) {
+		this.JFrame = frame;
 		this.usuario = usuario;
 		this.workout = workout;
 		this.ejercicioActual = primerEjercicio;
+		this.tiemposEjercicios = new ArrayList<>();
 
 		setBackground(Color.decode("#232637"));
 		setLayout(null);
@@ -196,11 +205,20 @@ public class EjercicioPanel extends JPanel {
 		// Inicia la primera serie si es la primera vez
 		if (indiceSerieActual == 0) {
 			iniciarSiguienteSerie();
+			return;
 		} else {
 			// Reanuda la serie actual
-			cronometroSerie.reanudar();
-			cronometroDescanso.reanudar();
+			if (cronometroSerie != null) {
+				cronometroSerie.reanudar();
+			}
+
+			if (cronometroDescanso != null) {
+				cronometroDescanso.reanudar();
+			}
 		}
+		
+		btnControl.setText("PAUSAR");
+		btnControl.setBackground(new Color(220, 60, 60));
 
 	}
 
@@ -228,10 +246,9 @@ public class EjercicioPanel extends JPanel {
 		threadCronometroSerie = new Thread(cronometroSerie);
 		threadCronometroSerie.start();
 
-		SwingUtilities.invokeLater(() -> {
-			btnControl.setText("PAUSAR");
-			btnControl.setBackground(new Color(220, 60, 60));
-		});
+		btnControl.setText("PAUSAR");
+		btnControl.setBackground(new Color(220, 60, 60));
+
 	}
 
 	// Marca la serie activa en la UI
@@ -255,15 +272,11 @@ public class EjercicioPanel extends JPanel {
 	// Pausa el ejercicio :P
 	private void pausarEjercicio() {
 		enPausa = true;
-		cronometroTotal.pausar();
-		cronometroSerie.pausar();
-		cronometroDescanso.pausar();
 
-		SwingUtilities.invokeLater(() -> {
-			btnControl.setText("REANUDAR");
-			btnControl.setBackground(new Color(99, 179, 92));
-		});
+		pausarCronometros();
 
+		btnControl.setText("REANUDAR");
+		btnControl.setBackground(new Color(99, 179, 92));
 	}
 
 	public void alFinalizarSerie() {
@@ -273,48 +286,103 @@ public class EjercicioPanel extends JPanel {
 		System.out.println("Serie finalizada: " + serieActual.getNombre());
 
 		// Marcar la serie como completada VISUALMENTE
-		marcarSerieComoCompletada(serieActual);
+		marcarSerieComoCompletada(indiceSerieActual);
 
-		// Aquí hay que manejar lo que sucede al finalizar una serie
+		// Pasar a la siguiente serie
 		indiceSerieActual++;
 
 		// Verificar si hay más series
 		if (indiceSerieActual < series.size()) {
-			//Hay mas series, iniciar descanso
+			// Hay mas series, iniciar descanso
 			iniciarDescanso(serieActual.getTiempoDescanso());
 		} else {
-			//No hay mas series, ejercicio completado
+			// No hay mas series, ejercicio completado
 			System.out.println("Exerxixio completatedo: " + ejercicioActual.getNombre());
 			ejercicioCompletado = true;
-			manejarBotonControl();
+			actualizarBotonControl();
 		}
 	}
 
 	private void iniciarDescanso(int tiempoDescanso) {
-		if (tiempoDescanso <= 0)
+		if (tiempoDescanso <= 0) {
 			iniciarSiguienteSerie();
+			return;
+		}
 
 		System.out.println("Iniciando descanso de " + tiempoDescanso + " segundos");
 
-		// TODO: Meter aqui el cronometro de descanso
+		// Crear e iniciar cronómetro de descanso
+		cronometroDescanso = new CronometroDescansoThread(txtDescanso, tiempoDescanso);
+		cronometroDescanso.setPanel(this);
+		Thread threadCronometroDescanso = new Thread(cronometroDescanso);
+		threadCronometroDescanso.start();
 	}
 
-	private void marcarSerieComoCompletada(Serie serieActual) {
+	// Marca la serie como completada y en verde
+	private void marcarSerieComoCompletada(int serieActual) {
 		JButton boton = null;
+
+		if (serieActual == 0) {
+			boton = btnSerie1;
+		} else if (serieActual == 1) {
+			boton = btnSerie2;
+		} else if (serieActual == 2) {
+			boton = btnSerie3;
+		}
 
 		boton.setBackground(new Color(34, 139, 34));
 		boton.setForeground(Color.WHITE);
 	}
-	
-	//Actualizar el boton de los ejercicios
+
+	// Actualizar el boton de los ejercicios
 	private void actualizarBotonControl() {
-		
+		// Return anticipado (guard clause)
+		// Salir si no está completado
+		if (!ejercicioCompletado) {
+			return;
+		}
+
+		// Si es el último ejercico
+		if (indiceEjercicioActual >= workout.getEjercicios().size() - 1) {
+			btnControl.setText("TERMINAR");
+			btnControl.setBackground(new Color(70, 130, 180));
+		} else {
+			btnControl.setText("SIGUIENTE");
+			btnControl.setBackground(new Color(70, 130, 180));
+
+		}
 	}
 
 	// Pasa al siguiente ejercicio :P
 	private void siguienteEjercicio() {
 		indiceEjercicioActual++;
 		System.out.println("Siguiente ejercicio: " + indiceEjercicioActual);
+
+		// Verifica si hay más ejercicios
+		if (indiceEjercicioActual >= workout.getEjercicios().size()) {
+			System.out.println("Workout completado: " + workout.getNombre());
+			salirDelEjercicio(JFrame);
+			return;
+		}
+
+		// Cargar el siguiente ejercicio
+		ejercicioActual = workout.getEjercicios().get(indiceEjercicioActual);
+		indiceSerieActual = 0;
+		ejercicioCompletado = false;
+
+		// Actualizar la UI
+		lblEjercicio.setText("Ejercicio: " + ejercicioActual.getNombre());
+		lblDescripcion.setText(ejercicioActual.getDescripcion());
+		lblTiempoSerie.setText("Serie: --:--");
+
+		cargarSeriesDelEjercicio();
+
+		iniciarSiguienteSerie();
+	}
+
+	public void alFinalizarDescanso() {
+		System.out.println("Descanso finalizado, iniciando siguiente serie");
+		iniciarSiguienteSerie();
 	}
 
 	// Carga las series del ejercicio actual en los campos correspondientes
@@ -361,36 +429,112 @@ public class EjercicioPanel extends JPanel {
 //        return series;
 //    }
 
-	// Formatear segundos a mm:ss
-	private String formatearTiempo(int segundos) {
-		int minutos = segundos / 60;
-		int segundosRestantes = segundos % 60;
-		return String.format("%02d:%02d", minutos, segundosRestantes);
-	}
-
 	// Voy a usar esto para parar todos los cronometros cuando salga del ejercicio
 	// En un futuro
 	// Lejano
 	// Y creo que para guardar el historico
 	private void salirDelEjercicio(JFrame frame) {
-		// Parar los cronometros
-		cronometroTotal.detener();
-		cronometroSerie.detener();
+		// Detener todos los cronómetros
+		detenerCronometros();
 
-		// Guardar el historico y muestrar mensaje motivacional
-		String mensaje = mensajeMotivacional();
-		frame.setContentPane(new WorkoutsPanel(frame, usuario));
-		frame.revalidate();
+		// Guardar el tiempo si se ha completado algún ejercicio
+		if (cronometroTotal != null && cronometroTotal.getSegundos() > 0) {
+			tiemposEjercicios.add(cronometroTotal.getSegundos());
+		}
 
-		JOptionPane.showMessageDialog(frame, mensaje, "Resumen del workaut", JOptionPane.INFORMATION_MESSAGE);
+		boolean workoutCompletado = indiceEjercicioActual >= workout.getEjercicios().size();
+		mostrarResumenFinal(workoutCompletado);
 	}
 
-	// Mensaje motivacional al salir del ejercicio
-	private String mensajeMotivacional() {
-		String[] mensajes = { "Mensaje motivacional 1", "Mensaje motivacional 2", "Mensaje motivacional 3", };
-		int mensaje = (int) (Math.random() * mensajes.length);
-		return mensajes[mensaje];
+	private void mostrarResumenFinal(boolean workoutCompletado) {
+		// Guarda histórico solo si se ha completado el workout
+		if (workoutCompletado) {
+			guardarHistorico();
+		}
 
+		detenerCronometros();
+		guardarHistorico();
+	}
+
+	private void guardarHistorico() {
+		try {
+			// Guardar el historico del workout
+			HistoricoDAO historicoDAO = new HistoricoDAO();
+
+			// Obtener fecha actual
+			LocalDate fechaActual = LocalDate.now();
+			DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			String fecha = fechaActual.format(formato);
+
+			// Calcula el tiempo previsto (suma de todos los ejercicios y series)
+			int tiempoPrevisto = calcularTiempoPrevisto();
+
+			Historico historico = new Historico(workout.getNombre(), workout.getNivel(), fecha,
+					cronometroTotal.getSegundos(), tiempoPrevisto, indiceEjercicioActual, workout.getNumEjercicios());
+
+			// Guardar en firebase
+			historicoDAO.addHistorico(usuario.getNickname(), historico);
+			System.out.println("Histórico guardado.");
+		} catch (Exception e) {
+			System.out.println("Error al guardar el historico:" + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private int calcularTiempoPrevisto() {
+		int total = 0;
+
+		ArrayList<Ejercicio> ejercicios = workout.getEjercicios();
+
+		for (Ejercicio ejercicio : ejercicios) {
+			total += calcularTiempoEjercicio(ejercicio);
+		}
+
+		return total;
+	}
+
+	private int calcularTiempoEjercicio(Ejercicio ejercicio) {
+		int tiempo = 0;
+
+		ArrayList<Serie> series = ejercicio.getSeries();
+
+		// Si no hay series, devolver 0
+		if (series == null) {
+			return 0;
+		}
+
+		// Sumar tiempo de cada serie
+		for (Serie serie : series) {
+			tiempo += serie.getTiempoSerie();
+			tiempo += serie.getTiempoDescanso();
+		}
+
+		return tiempo;
+	}
+
+	private void pausarCronometros() {
+		if (cronometroTotal != null) {
+			cronometroTotal.pausar();
+		}
+		if (cronometroSerie != null) {
+			cronometroSerie.pausar();
+		}
+		if (cronometroDescanso != null) {
+			cronometroDescanso.pausar();
+		}
+
+	}
+
+	private void detenerCronometros() {
+		if (cronometroTotal != null) {
+			cronometroTotal.detener();
+		}
+		if (cronometroSerie != null) {
+			cronometroSerie.detener();
+		}
+		if (cronometroDescanso != null) {
+			cronometroDescanso.detener();
+		}
 	}
 
 	// Estilo para las series
@@ -407,4 +551,5 @@ public class EjercicioPanel extends JPanel {
 		boton.setBorder(BorderFactory.createLineBorder(new Color(110, 115, 120)));
 		boton.setEnabled(false);
 	}
+
 }
