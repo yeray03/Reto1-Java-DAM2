@@ -16,7 +16,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 
+import controlador.ConexionControlador;
 import controlador.WorkoutControlador;
+import gestor.GestorFicheros;
 import pojos.Ejercicio;
 import pojos.Usuario;
 import pojos.Workout;
@@ -78,8 +80,13 @@ public class WorkoutsPanel extends JPanel {
 			comboBox.addItem(nivel);
 		}
 
-		WorkoutControlador controlador = WorkoutControlador.getInstanceControlador();
-		workouts = controlador.getWorkoutsHastaNivel(usuario.getNivel());
+		// Cargar workouts por defecto
+		Boolean conexion = ConexionControlador.getInstance().comprobarConexion();
+		if (conexion) { // cargar desde base de datos
+			workouts = WorkoutControlador.getInstanceControlador().getWorkoutsHastaNivel(usuario.getNivel());
+		} else { // cargar desde fichero de backup
+			workouts = GestorFicheros.getInstance().leerWorkouts();
+		}
 
 		// Crear el modelo de la tabla
 		workoutModel = new DefaultTableModel(new Object[] { "Nombre", "Nivel", "Numero de ejercicios", "Video" }, 0) {
@@ -100,22 +107,19 @@ public class WorkoutsPanel extends JPanel {
 				Object[] newRow = { workout.getNombre(), workout.getNivel(), workout.getNumEjercicios(),
 						workout.getVideoUrl() };
 				workoutModel.addRow(newRow);
-
 			}
 		}
 
 		scrollPane.setBounds(20, 114, 595, 300);
 		add(scrollPane);
 
-		comboBox.addActionListener(e -> actualizarTablaPorNivel(controlador, comboBox));
-		
+		comboBox.addActionListener(e -> actualizarTablaPorNivel(comboBox));
+
 		JButton btnHistorico = new JButton("Historico de Workouts");
 		btnHistorico.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
 				frame.setContentPane(new HistoricoWorkoutsPanel(frame, usuario));
 				frame.validate();
-				
 			}
 		});
 		btnHistorico.setBounds(416, 81, 170, 21);
@@ -162,32 +166,57 @@ public class WorkoutsPanel extends JPanel {
 
 	}
 
-	private void actualizarTablaPorNivel(WorkoutControlador controlador, JComboBox<String> comboBox) {
+	private void actualizarTablaPorNivel(JComboBox<String> comboBox) {
 
 		if (comboBox.getSelectedItem().toString() != "Default") {
-			// cargar todos los workouts de ese nivel
-			workoutModel.setRowCount(0); // limpiar tabla
-			workouts = controlador.getWorkoutsPorNivel(Integer.parseInt(comboBox.getSelectedItem().toString()));
-			if (workouts != null) {
-				for (Workout workout : workouts) {
-					Object[] newRow = { workout.getNombre(), workout.getNivel(), workout.getNumEjercicios(),
-							workout.getVideoUrl() };
-					workoutModel.addRow(newRow);
+			if (ConexionControlador.getInstance().comprobarConexion()) { // si hay conexion
+				// cargar todos los workouts de ese nivel
+				workoutModel.setRowCount(0); // limpiar tabla
+				workouts = WorkoutControlador.getInstanceControlador()
+						.getWorkoutsPorNivel(Integer.parseInt(comboBox.getSelectedItem().toString()));
+				if (workouts != null) {
+					for (Workout workout : workouts) {
+						Object[] newRow = { workout.getNombre(), workout.getNivel(), workout.getNumEjercicios(),
+								workout.getVideoUrl() };
+						workoutModel.addRow(newRow);
+					}
+				}
+
+			} else { // si no hay conexion
+				workoutModel.setRowCount(0); // limpiar tabla
+				workouts = GestorFicheros.getInstance()
+						.leerWorkoutsPorNivel(Integer.parseInt(comboBox.getSelectedItem().toString()));
+				if (workouts != null) {
+					for (Workout workout : workouts) {
+						Object[] newRow = { workout.getNombre(), workout.getNivel(), workout.getNumEjercicios(),
+								workout.getVideoUrl() };
+						workoutModel.addRow(newRow);
+					}
 				}
 			}
-
 		} else {
-			// cargar todos los workouts hasta el nivel del usuario
-			workoutModel.setRowCount(0); // limpiar tabla
-			workouts = controlador.getWorkoutsHastaNivel(usuario.getNivel());
-			if (workouts != null) {
-				for (Workout workout : workouts) {
-					Object[] newRow = { workout.getNombre(), workout.getNivel(), workout.getNumEjercicios(),
-							workout.getVideoUrl() };
-					workoutModel.addRow(newRow);
+			if (ConexionControlador.getInstance().comprobarConexion()) { // si hay conexion
+				// cargar todos los workouts hasta el nivel del usuario
+				workoutModel.setRowCount(0); // limpiar tabla
+				workouts = WorkoutControlador.getInstanceControlador().getWorkoutsHastaNivel(usuario.getNivel());
+				if (workouts != null) {
+					for (Workout workout : workouts) {
+						Object[] newRow = { workout.getNombre(), workout.getNivel(), workout.getNumEjercicios(),
+								workout.getVideoUrl() };
+						workoutModel.addRow(newRow);
+					}
+				}
+			} else { // si no hay conexion
+				workoutModel.setRowCount(0); // limpiar tabla
+				workouts = GestorFicheros.getInstance().leerWorkouts();
+				if (workouts != null) {
+					for (Workout workout : workouts) {
+						Object[] newRow = { workout.getNombre(), workout.getNivel(), workout.getNumEjercicios(),
+								workout.getVideoUrl() };
+						workoutModel.addRow(newRow);
+					}
 				}
 			}
 		}
-
 	}
 }

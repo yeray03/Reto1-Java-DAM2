@@ -3,6 +3,7 @@ package vista;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.BorderFactory;
@@ -13,6 +14,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import controlador.ConexionControlador;
 import controlador.UsuarioControlador;
 import gestor.GestorFicheros;
 import pojos.Usuario;
@@ -112,25 +115,53 @@ public class LoginPanel extends JPanel {
 						JOptionPane.ERROR_MESSAGE);
 			} else {
 				try {
-					UsuarioControlador controlador = UsuarioControlador.getInstance();
-					Usuario usuario = controlador.buscarPorNick(nickname);
-
-					if (usuario == null) {
-						JOptionPane.showMessageDialog(this, "El usuario no existe.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					} else if (!usuario.getContrasena().equals(pass)) {
-						JOptionPane.showMessageDialog(this, "Contraseña incorrecta.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+					Boolean conexion = new ConexionControlador().comprobarConexion();
+					if (conexion) {
+						UsuarioControlador controlador = UsuarioControlador.getInstance();
+						Usuario usuario = controlador.buscarPorNick(nickname);
+						if (usuario == null) {
+							JOptionPane.showMessageDialog(this, "El usuario no existe.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						} else if (!usuario.getContrasena().equals(pass)) {
+							JOptionPane.showMessageDialog(this, "Contraseña incorrecta.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(this,
+									"Login correcto. ¡Bienvenido/a " + usuario.getNickname(), "Login",
+									JOptionPane.INFORMATION_MESSAGE);
+							// Cambiar de pantalla
+							GestorFicheros gestor = GestorFicheros.getInstance();
+							gestor.guardarDatos(); // BACKUP DE DATOS AL INICIAR SESIÓN
+							frame.setContentPane(new WorkoutsPanel(frame, usuario));
+							frame.validate();
+						}
 					} else {
-
-						JOptionPane.showMessageDialog(this, "Login correcto. ¡Bienvenido/a " + usuario.getNickname(),
-								"Login", JOptionPane.INFORMATION_MESSAGE);
-						// Cambiar de pantalla
+						System.out.println("No hay conexión a Internet. Iniciando sesión en modo offline.");
 						GestorFicheros gestor = GestorFicheros.getInstance();
-						gestor.guardarDatos(); // BACKUP DE DATOS AL INICIAR SESIÓN
-						frame.setContentPane(new WorkoutsPanel(frame, usuario));
-						frame.validate();
+//						gestor.leerUsuarios();
+						Usuario usuario = gestor.buscarUsuarioOffline(nickname);
+						if (usuario != null) {
+							if (!usuario.getContrasena().equals(pass)) {
+								JOptionPane.showMessageDialog(this, "Contraseña incorrecta.", "Error",
+										JOptionPane.ERROR_MESSAGE);
+								return;
+							} else {
+								JOptionPane.showMessageDialog(this,
+										"Login correcto. ¡Bienvenido/a " + usuario.getNickname(), "Login",
+										JOptionPane.INFORMATION_MESSAGE);
+								// Cambiar de pantalla
+								frame.setContentPane(new WorkoutsPanel(frame, usuario));
+								frame.validate();
+							}
+						} else {
+							JOptionPane.showMessageDialog(this, "El usuario no existe.", "Error",
+									JOptionPane.INFORMATION_MESSAGE);
+						}
 					}
+				} catch (FileNotFoundException fnf) {
+					JOptionPane.showMessageDialog(null,
+							"Para poder usar la aplicacion en modo sin conexión, inicia sesión al menos una vez con conexión a internet.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 				} catch (IOException ex) {
 					ex.printStackTrace();
 				} catch (ExecutionException ee) {
@@ -139,9 +170,6 @@ public class LoginPanel extends JPanel {
 					ie.printStackTrace();
 				}
 			}
-
 		});
-
 	}
-
 }

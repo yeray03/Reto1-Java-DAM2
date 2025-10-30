@@ -2,6 +2,7 @@ package gestor;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,7 +37,7 @@ import pojos.Workout;
 public class GestorFicheros {
 
 	private static GestorFicheros instancia = null;
-	private Path rutaDirectorio;
+	private Path rutaDirectorio = Paths.get(System.getProperty("user.home"), "Documents", "SpinningCat");;
 
 	public static GestorFicheros getInstance() {
 		if (instancia == null) {
@@ -48,19 +49,12 @@ public class GestorFicheros {
 	public void guardarDatos() {
 		// El fichero se va a guardar en el directorio SpinningCat en la carpeta
 		// Documentos del usuario (nadie usa "trastero" :P)
-		rutaDirectorio = Paths.get(System.getProperty("user.home"), "Documents", "SpinningCat");
 		try {
 			Files.createDirectories(rutaDirectorio);
 			guardarUsuarios();
 			guardarWorkouts();
 			guardarEjercicios();
 			guardarHistorico();
-
-			// PARA LEER LOS FICHEROS CREADOS (lo pongo por si hace falta luego)
-//			leerUsuarios();
-//			leerWorkouts();
-//			leerEjercicios();
-//			leerHistorico();
 		} catch (IOException e) {
 			System.err.println("Error al crear el directorio: " + rutaDirectorio);
 			e.printStackTrace();
@@ -268,11 +262,10 @@ public class GestorFicheros {
 	}
 
 	// LEER USUARIOS
-	private void leerUsuarios() {
+	public void leerUsuarios() {
 		File file = null;
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
-
 		try {
 			file = new File(rutaDirectorio.toString(), "usuarios.dat");
 			fis = new FileInputStream(file);
@@ -282,41 +275,60 @@ public class GestorFicheros {
 				Usuario usuario = (Usuario) ois.readObject();
 				System.out.println("Usuario leído: " + usuario.toString());
 			}
-
 		} catch (Exception e) {
 			System.out.println("Error al leer el fichero usuarios.dat.");
-			e.printStackTrace();
 		}
 	}
 
 	// LEER WORKOUTS
-	private void leerWorkouts() {
+	public ArrayList<Workout> leerWorkouts() {
 		File file = null;
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
-
+		ArrayList<Workout> workouts = new ArrayList<Workout>();
 		try {
 			file = new File(rutaDirectorio.toString(), "workouts.dat");
 			fis = new FileInputStream(file);
 			ois = new ObjectInputStream(fis);
-
 			while (fis.getChannel().position() < fis.getChannel().size()) {
 				Workout workout = (Workout) ois.readObject();
-				System.out.println("Workout leído: " + workout.toString());
+				if (workout != null)
+					workouts.add(workout);
 			}
-
 		} catch (Exception e) {
 			System.out.println("Error al leer el fichero workouts.dat.");
 			e.printStackTrace();
 		}
+		return workouts;
 	}
 
-	// LEER EJERCICIOS
-	private void leerEjercicios() {
+	// LEER WORKOUTS POR NIVEL
+	public ArrayList<Workout> leerWorkoutsPorNivel(int nivel) {
 		File file = null;
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
+		ArrayList<Workout> workouts = new ArrayList<Workout>();
+		try {
+			file = new File(rutaDirectorio.toString(), "workouts.dat");
+			fis = new FileInputStream(file);
+			ois = new ObjectInputStream(fis);
+			while (fis.getChannel().position() < fis.getChannel().size()) {
+				Workout workout = (Workout) ois.readObject();
+				if (workout != null && workout.getNivel() == nivel)
+					workouts.add(workout);
+			}
+		} catch (Exception e) {
+			System.out.println("Error al leer el fichero workouts.dat.");
+			e.printStackTrace();
+		}
+		return workouts;
+	}
 
+	// LEER EJERCICIOS
+	public void leerEjercicios() {
+		File file = null;
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
 		try {
 			file = new File(rutaDirectorio.toString(), "ejercicios.dat");
 			fis = new FileInputStream(file);
@@ -335,7 +347,7 @@ public class GestorFicheros {
 	}
 
 	// LEER HISTORICO
-	private void leerHistorico() {
+	public void leerHistorico() {
 		try {
 			// Crear la fabrica de constructores de documentos
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -347,53 +359,62 @@ public class GestorFicheros {
 			Element root = doc.getDocumentElement();
 			System.out.println("Elemento raíz: " + root.getNodeName());
 
-			// Obtener la lista de nodos "usuario"
+			// OBTENER LA LISTA DE NODOS "usuario"
 			NodeList usuarios = doc.getElementsByTagName("usuario");
-
-			// Obtener cada usuario
+			// OBTENER CADA USUARIO
 			for (int i = 0; i < usuarios.getLength(); i++) {
 				Node nodoUsuario = usuarios.item(i);
 				if (nodoUsuario.getNodeType() == Node.ELEMENT_NODE) {
 					Element element = (Element) nodoUsuario;
 					System.out.println("usuario id: " + element.getAttribute("id"));
-					// Obtener la lista de nodos "historico" para este usuario
+					// OBTENER LA LISTA DE NODOS "historico"
 					NodeList historicos = element.getElementsByTagName("historico");
-					// Obtener cada histórico
+					// OBTENER CADA HISTORICO
 					for (int j = 0; j < historicos.getLength(); j++) {
 						Node nodoHistorico = historicos.item(j);
 						if (nodoHistorico.getNodeType() == Node.ELEMENT_NODE) {
 							Element historicoElement = (Element) nodoHistorico;
 							System.out.println("Historico: ");
+							// OBTENER LA LISTA DE NODOS "ejerciciosCompletados"
 							NodeList completados = historicoElement.getElementsByTagName("ejerciciosCompletados");
 							for (int k = 0; k < completados.getLength(); k++) {
+								// OBTENER CADA NODO "ejerciciosCompletados"
 								Node nodeCompletados = completados.item(k);
 								if (nodeCompletados.getNodeType() == Node.ELEMENT_NODE) {
 									Element ejerciciosCompletadosElement = (Element) completados.item(k);
 									System.out.println(
 											"ejerciciosCompletados: " + ejerciciosCompletadosElement.getTextContent());
+									// OBTENER LA LISTA DE NODOS "ejerciciosTotales"
 									NodeList totales = historicoElement.getElementsByTagName("ejerciciosTotales");
 									for (int l = 0; l < totales.getLength(); l++) {
+										// OBTENER CADA NODO "ejerciciosTotales"
 										Node nodeTotales = totales.item(l);
 										if (nodeTotales.getNodeType() == Node.ELEMENT_NODE) {
 											Element ejerciciosTotalesElement = (Element) totales.item(l);
 											System.out.println(
 													"ejerciciosTotales: " + ejerciciosTotalesElement.getTextContent());
+											// OBTENER LA LISTA DE NODOS "fecha"
 											NodeList fechas = historicoElement.getElementsByTagName("fecha");
 											for (int m = 0; m < fechas.getLength(); m++) {
+												// OBTENER CADA NODO "fecha"
 												Node nodeFechas = fechas.item(m);
 												if (nodeFechas.getNodeType() == Node.ELEMENT_NODE) {
 													Element fechaElement = (Element) fechas.item(m);
 													System.out.println("fecha: " + fechaElement.getTextContent());
+													// OBTENER LA LISTA DE NODOS "nivel"
 													NodeList niveles = historicoElement.getElementsByTagName("nivel");
 													for (int n = 0; n < niveles.getLength(); n++) {
+														// OBTENER CADA NODO "nivel"
 														Node nodeNiveles = niveles.item(n);
 														if (nodeNiveles.getNodeType() == Node.ELEMENT_NODE) {
 															Element nivelElement = (Element) niveles.item(n);
 															System.out
 																	.println("nivel: " + nivelElement.getTextContent());
+															// OBTENER LA LISTA DE NODOS "porcentajeCompletado"
 															NodeList porcentajes = historicoElement
 																	.getElementsByTagName("porcentajeCompletado");
 															for (int o = 0; o < porcentajes.getLength(); o++) {
+																// OBTENER CADA NODO "porcentajeCompletado"
 																Node nodePorcentajes = porcentajes.item(o);
 																if (nodePorcentajes
 																		.getNodeType() == Node.ELEMENT_NODE) {
@@ -401,10 +422,12 @@ public class GestorFicheros {
 																			.item(o);
 																	System.out.println("porcentajeCompletado: "
 																			+ porcentajeElement.getTextContent());
+																	// OBTENER LA LISTA DE NODOS "tiempoPrevisto"
 																	NodeList tiemposPrevistos = historicoElement
 																			.getElementsByTagName("tiempoPrevisto");
 																	for (int p = 0; p < tiemposPrevistos
 																			.getLength(); p++) {
+																		// OBTENER CADA NODO "tiempoPrevisto"
 																		Node nodeTiemposPrevistos = tiemposPrevistos
 																				.item(p);
 																		if (nodeTiemposPrevistos
@@ -414,11 +437,13 @@ public class GestorFicheros {
 																			System.out.println("tiempoPrevisto: "
 																					+ tiempoPrevistoElement
 																							.getTextContent());
+																			// OBTENER LA LISTA DE NODOS "tiempoTotal"
 																			NodeList tiemposTotales = historicoElement
 																					.getElementsByTagName(
 																							"tiempoTotal");
 																			for (int q = 0; q < tiemposTotales
 																					.getLength(); q++) {
+																				// OBTENER CADA NODO "tiempoTotal"
 																				Node nodeTiemposTotales = tiemposTotales
 																						.item(q);
 																				if (nodeTiemposTotales
@@ -428,11 +453,13 @@ public class GestorFicheros {
 																					System.out.println("tiempoTotal: "
 																							+ tiempoTotalElement
 																									.getTextContent());
+																					// OBTENER LA LISTA DE NODOS
 																					NodeList workoutNombres = historicoElement
 																							.getElementsByTagName(
 																									"workoutNombre");
 																					for (int r = 0; r < workoutNombres
 																							.getLength(); r++) {
+																						// OBTENER CADA NODO
 																						Node nodeWorkoutNombres = workoutNombres
 																								.item(r);
 																						if (nodeWorkoutNombres
@@ -469,7 +496,47 @@ public class GestorFicheros {
 			System.out.println("Error al leer el fichero historico.xml.");
 			e.printStackTrace();
 		}
+	}
 
+	// BUSCAR USUARIO OFFLINE
+	public Usuario buscarUsuarioOffline(String nickname) throws FileNotFoundException {
+		File file = null;
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
+
+		try {
+			file = new File(rutaDirectorio.toString(), "Usuarios.dat");
+			fis = new FileInputStream(file);
+			ois = new ObjectInputStream(fis);
+
+			while (fis.getChannel().position() < fis.getChannel().size()) {
+				Usuario usuario = (Usuario) ois.readObject();
+				if (usuario.getNickname().equalsIgnoreCase(nickname.trim())) {
+					return usuario;
+				}
+			}
+		} catch (FileNotFoundException fnf) {
+			throw fnf;
+		} catch (Exception e) {
+			System.out.println("Error al leer el fichero Usuarios.dat.");
+			e.printStackTrace();
+		} finally {
+			// Cerrar el ObjectInputStream
+			try {
+				if (ois != null)
+					ois.close();
+			} catch (IOException e) {
+				// borjita te queremos
+			}
+			// Close the FileInputStream
+			try {
+				if (fis != null)
+					fis.close();
+			} catch (IOException e) {
+				// merecemos un 10
+			}
+		}
+		return null;
 	}
 
 }

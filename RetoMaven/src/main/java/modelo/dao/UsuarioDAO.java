@@ -39,22 +39,6 @@ public class UsuarioDAO extends FirebaseInitialize {
 		db.collection("usuarios").document(nickname).set(usuario);
 	}
 
-	// Busca el usuario por nickname
-	public Usuario buscarUsuarioPorNick(String nickname) throws IOException, ExecutionException, InterruptedException {
-		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());
-
-		String nickBuscado = nickname.trim();
-
-		ApiFuture<QuerySnapshot> snapshot = db.collection("usuarios").whereEqualTo("nickname", nickBuscado).get();
-		QuerySnapshot querySnapshot = snapshot.get();
-
-		if (!querySnapshot.isEmpty()) {
-			DocumentSnapshot documento = querySnapshot.getDocuments().get(0);
-			return documento.toObject(Usuario.class);
-		}
-		return null;
-	}
-
 	// Obtiene todos los usuarios de la base de datos
 	public ArrayList<Usuario> obtenerTodosUsuarios() throws IOException, ExecutionException, InterruptedException {
 		Firestore db = FirestoreClient.getFirestore(FirebaseApp.getInstance());

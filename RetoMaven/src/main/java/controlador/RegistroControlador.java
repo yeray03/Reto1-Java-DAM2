@@ -2,6 +2,7 @@ package controlador;
 
 import modelo.dao.UsuarioDAO;
 import pojos.Usuario;
+import java.util.ArrayList;
 
 public class RegistroControlador {
 
@@ -39,9 +40,12 @@ public class RegistroControlador {
 			}
 
 			// Comprobamos si el usuario ya existe
-			Usuario existente = usuarioDAO.buscarUsuarioPorNick(usuario.getNickname().trim().toLowerCase());
-			if (existente != null) {
-				return "El usuario ya estaba registrado.";
+			UsuarioControlador usuarioControlador = UsuarioControlador.getInstance();
+			ArrayList<Usuario> usuarios = usuarioControlador.obtenerTodosUsuarios();
+			for (Usuario u : usuarios) {
+				if (u.getEmail().equalsIgnoreCase(usuario.getEmail().trim())) {
+					return "El email ya estaba registrado.";
+				}
 			}
 
 			// Registrar usuario en Firestore

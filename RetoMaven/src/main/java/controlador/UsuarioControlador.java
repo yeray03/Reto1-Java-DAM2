@@ -31,10 +31,15 @@ public class UsuarioControlador {
 	 * @throws InterruptedException
 	 */
 	public Usuario buscarPorNick(String nickname) throws IOException, ExecutionException, InterruptedException {
-		Usuario ret = usuarioDAO.buscarUsuarioPorNick(nickname);
-		return ret;
+		ArrayList<Usuario> usuarios = usuarioDAO.obtenerTodosUsuarios();
+		for (Usuario u : usuarios) {
+			if (u.getNickname().equalsIgnoreCase(nickname.trim())) {
+				return u;
+			}
+		}
+		return null;
 	}
-	
+
 	public ArrayList<Usuario> obtenerTodosUsuarios() throws IOException, ExecutionException, InterruptedException {
 		ArrayList<Usuario> usuarios = usuarioDAO.obtenerTodosUsuarios();
 		return usuarios;
