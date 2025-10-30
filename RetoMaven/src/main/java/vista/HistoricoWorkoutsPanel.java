@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import controlador.ConexionControlador;
 import controlador.HistoricoControlador;
 import pojos.Historico;
 import pojos.Usuario;
@@ -44,8 +46,13 @@ public class HistoricoWorkoutsPanel extends JPanel {
 		lblPerfil.setBounds(579, 11, 36, 36);
 		add(lblPerfil);
 
-		HistoricoControlador controlador = HistoricoControlador.getInstance();
-		historicos = controlador.getHistoricoUsuario(usuario);
+		Boolean conexion = ConexionControlador.getInstance().comprobarConexion();
+		if (conexion) {
+			HistoricoControlador controlador = HistoricoControlador.getInstance();
+			historicos = controlador.getHistoricoUsuario(usuario);
+		}else {
+			historicos = HistoricoControlador.getHistoricoOffline(usuario);
+		}
 
 		// Crear el modelo de la tabla
 		workoutModel = new DefaultTableModel(new Object[] { "Nombre Workout", "Nivel", "Tiempo Total",

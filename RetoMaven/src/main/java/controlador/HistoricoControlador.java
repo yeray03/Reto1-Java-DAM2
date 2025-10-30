@@ -2,6 +2,7 @@ package controlador;
 
 import java.util.ArrayList;
 
+import gestor.GestorFicheros;
 import pojos.Historico;
 import pojos.Usuario;
 import modelo.dao.HistoricoDAO;
@@ -28,5 +29,17 @@ public class HistoricoControlador {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	// Obtiene el historico de un usuario offlne
+	public static ArrayList<Historico> getHistoricoOffline(Usuario usuario) {
+		try {
+			GestorFicheros gestor = GestorFicheros.getInstance();
+			ArrayList<Historico> ret = gestor.leerHistorico(usuario);
+			return ret;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

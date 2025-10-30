@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
+import controlador.ConexionControlador;
+import gestor.GestorFicheros;
 import modelo.CronometroDescansoThread;
 import modelo.CronometroThread;
 import modelo.dao.HistoricoDAO;
@@ -377,24 +379,40 @@ public class EjercicioPanel extends JPanel {
 
 	private void guardarHistorico(boolean completado, int tiempoTotal) {
 		try {
-			HistoricoDAO historicoDAO = new HistoricoDAO();
+			if (ConexionControlador.getInstance().comprobarConexion()) { // si hay conexion
+				HistoricoDAO historicoDAO = new HistoricoDAO();
 
-			LocalDate fechaActual = LocalDate.now();
-			DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-			String fecha = fechaActual.format(formato);
+				LocalDate fechaActual = LocalDate.now();
+				DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				String fecha = fechaActual.format(formato);
 
-			int tiempoPrevisto = calcularTiempoPrevisto();
+				int tiempoPrevisto = calcularTiempoPrevisto();
 
-			Historico historico = new Historico(workout.getNombre(), workout.getNivel(), fecha, tiempoTotal,
-					tiempoPrevisto, indiceEjercicioActual, workout.getNumEjercicios());
+				Historico historico = new Historico(workout.getNombre(), workout.getNivel(), fecha, tiempoTotal,
+						tiempoPrevisto, indiceEjercicioActual, workout.getNumEjercicios());
 
-			historicoDAO.addHistorico(usuario.getNickname(), historico);
+				historicoDAO.addHistorico(usuario.getNickname(), historico);
 
-			if (completado) {
-				System.out.println("Histórico guardado: Workout completado.");
+				if (completado) {
+					System.out.println("Histórico guardado: Workout completado.");
+				} else {
+					System.out.println("Histórico guardado: Workout interrumpido con progreso " + indiceEjercicioActual
+							+ "/" + workout.getNumEjercicios());
+				}
 			} else {
-				System.out.println("Histórico guardado: Workout interrumpido con progreso " + indiceEjercicioActual
-						+ "/" + workout.getNumEjercicios());
+				LocalDate fechaActual = LocalDate.now();
+				DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				String fecha = fechaActual.format(formato);
+				int tiempoPrevisto = calcularTiempoPrevisto();
+				Historico historico = new Historico(workout.getNombre(), workout.getNivel(), fecha, tiempoTotal,
+						tiempoPrevisto, indiceEjercicioActual, workout.getNumEjercicios());
+				GestorFicheros.getInstance().guardarHistoricoUsuario(usuario, historico);
+				if (completado) {
+					System.out.println("Histórico guardado: Workout completado.");
+				} else {
+					System.out.println("Histórico guardado: Workout interrumpido con progreso " + indiceEjercicioActual
+							+ "/" + workout.getNumEjercicios());
+				}
 			}
 		} catch (Exception e) {
 			System.out.println("Error al guardar el historico: " + e.getMessage());
