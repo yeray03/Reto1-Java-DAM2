@@ -129,9 +129,34 @@ public class LoginPanel extends JPanel {
 							JOptionPane.showMessageDialog(this,
 									"Login correcto. ¡Bienvenido/a " + usuario.getNickname(), "Login",
 									JOptionPane.INFORMATION_MESSAGE);
+							// Iniciar proceso de backup en segundo plano
+							Thread backupThread = new Thread(() -> {
+								try {
+									System.out.println("Iniciando proceso de backup...");
+									// OBTENER RUTAS JAVA
+									String javaHome = System.getProperty("java.home");
+									String javaBin = javaHome + "/bin/java";
+									String classpath = System.getProperty("java.class.path");
+
+									// CREAR PROCESO
+									String[] processInfo = { javaBin, "-cp", classpath, "procesos.ProcesoBackup" };
+									Runtime runtime = Runtime.getRuntime();
+									Process process = runtime.exec(processInfo);
+
+									int exitCode = process.waitFor();
+									if (exitCode == 0) {
+										System.out.println("Proceso de backup finalizado correctamente.");
+									} else {
+										System.out.println("El proceso de backup finalizó con errores.");
+									}
+								} catch (IOException e2) {
+									e2.printStackTrace();
+								} catch (InterruptedException e1) {
+									e1.printStackTrace();
+								}
+							});
+							backupThread.start();
 							// Cambiar de pantalla
-							GestorFicheros gestor = GestorFicheros.getInstance();
-							gestor.guardarDatos(); // BACKUP DE DATOS AL INICIAR SESIÓN
 							frame.setContentPane(new WorkoutsPanel(frame, usuario));
 							frame.validate();
 						}

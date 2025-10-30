@@ -1,7 +1,6 @@
 package controlador;
 
 import java.util.ArrayList;
-
 import gestor.GestorFicheros;
 import pojos.Historico;
 import pojos.Usuario;
@@ -41,5 +40,14 @@ public class HistoricoControlador {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public void addHistorico(Usuario usuario, Historico historico) {
+		HistoricoDAO historicoDAO = new HistoricoDAO();
+		try {
+			historicoDAO.addHistorico(usuario.getNickname(), historico);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

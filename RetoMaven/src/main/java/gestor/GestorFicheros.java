@@ -348,7 +348,7 @@ public class GestorFicheros {
 	}
 
 	// LEER WORKOUTS
-	public ArrayList<Workout> leerWorkouts() {
+	public ArrayList<Workout> leerWorkoutsHastaNivel(int nivel) {
 		File file = null;
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
@@ -359,7 +359,7 @@ public class GestorFicheros {
 			ois = new ObjectInputStream(fis);
 			while (fis.getChannel().position() < fis.getChannel().size()) {
 				Workout workout = (Workout) ois.readObject();
-				if (workout != null)
+				if (workout != null && workout.getNivel() <= nivel)
 					workouts.add(workout);
 			}
 		} catch (Exception e) {
@@ -624,5 +624,4 @@ public class GestorFicheros {
 		}
 		return null;
 	}
-
 }

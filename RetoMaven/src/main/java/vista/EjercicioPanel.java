@@ -5,7 +5,7 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -382,8 +382,8 @@ public class EjercicioPanel extends JPanel {
 			if (ConexionControlador.getInstance().comprobarConexion()) { // si hay conexion
 				HistoricoDAO historicoDAO = new HistoricoDAO();
 
-				LocalDate fechaActual = LocalDate.now();
-				DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				LocalDateTime fechaActual = LocalDateTime.now();
+				DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 				String fecha = fechaActual.format(formato);
 
 				int tiempoPrevisto = calcularTiempoPrevisto();
@@ -400,8 +400,8 @@ public class EjercicioPanel extends JPanel {
 							+ "/" + workout.getNumEjercicios());
 				}
 			} else {
-				LocalDate fechaActual = LocalDate.now();
-				DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				LocalDateTime fechaActual = LocalDateTime.now();
+				DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 				String fecha = fechaActual.format(formato);
 				int tiempoPrevisto = calcularTiempoPrevisto();
 				Historico historico = new Historico(workout.getNombre(), workout.getNivel(), fecha, tiempoTotal,

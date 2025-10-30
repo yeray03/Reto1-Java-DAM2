@@ -85,7 +85,7 @@ public class WorkoutsPanel extends JPanel {
 		if (conexion) { // cargar desde base de datos
 			workouts = WorkoutControlador.getInstanceControlador().getWorkoutsHastaNivel(usuario.getNivel());
 		} else { // cargar desde fichero de backup
-			workouts = GestorFicheros.getInstance().leerWorkouts();
+			workouts = GestorFicheros.getInstance().leerWorkoutsHastaNivel(usuario.getNivel());
 		}
 
 		// Crear el modelo de la tabla
@@ -208,7 +208,7 @@ public class WorkoutsPanel extends JPanel {
 				}
 			} else { // si no hay conexion
 				workoutModel.setRowCount(0); // limpiar tabla
-				workouts = GestorFicheros.getInstance().leerWorkouts();
+				workouts = GestorFicheros.getInstance().leerWorkoutsHastaNivel(usuario.getNivel());
 				if (workouts != null) {
 					for (Workout workout : workouts) {
 						Object[] newRow = { workout.getNombre(), workout.getNivel(), workout.getNumEjercicios(),
