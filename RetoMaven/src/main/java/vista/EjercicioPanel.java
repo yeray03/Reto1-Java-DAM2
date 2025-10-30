@@ -39,18 +39,14 @@ public class EjercicioPanel extends JPanel {
 	private JTextArea txtDescanso;
 	private JButton btnSerie1, btnSerie2, btnSerie3;
 	private JButton btnControl, btnSalir;
-
 	private CronometroThread cronometroTotal;
 	private CronometroThread cronometroSerie;
 	private Thread threadCronometroSerie;
 	private CronometroDescansoThread cronometroDescanso;
-
 	private Usuario usuario;
 	private Workout workout;
 	private int indiceEjercicioActual = 0;
 	private Ejercicio ejercicioActual;
-	private ArrayList<Integer> tiemposEjercicios;
-
 	private int indiceSerieActual = 0;
 	private boolean enPausa = true;
 	private boolean ejercicioCompletado = false;
@@ -62,7 +58,6 @@ public class EjercicioPanel extends JPanel {
 		this.usuario = usuario;
 		this.workout = workout;
 		this.ejercicioActual = primerEjercicio;
-		this.tiemposEjercicios = new ArrayList<>();
 
 		setBackground(Color.decode("#232637"));
 		setLayout(null);
@@ -392,6 +387,7 @@ public class EjercicioPanel extends JPanel {
 						tiempoPrevisto, indiceEjercicioActual, workout.getNumEjercicios());
 
 				historicoDAO.addHistorico(usuario.getNickname(), historico);
+				GestorFicheros.getInstance().guardarHistoricoUsuario(usuario, historico);
 
 				if (completado) {
 					System.out.println("Histórico guardado: Workout completado.");
