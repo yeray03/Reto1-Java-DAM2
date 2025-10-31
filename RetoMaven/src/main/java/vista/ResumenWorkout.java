@@ -67,8 +67,9 @@ public class ResumenWorkout extends JDialog {
 
 			// Diferencia de tiempo
 			int diferencia = tiempoTotal - tiempoPrevisto;
-			String textoTiempo = diferencia > 0 ? "Te tomó " + formatearTiempo(Math.abs(diferencia)) + " más"
-					: "Lo hiciste" + formatearTiempo(Math.abs(diferencia)) + " más rápido!";
+			String textoTiempo = diferencia > 0
+					? "Has tardado " + formatearTiempo(Math.abs(diferencia)) + " más de lo previsto."
+					: "Has terminado" + formatearTiempo(Math.abs(diferencia)) + " más rápido!";
 
 			JLabel lblDiferencia = new JLabel(textoTiempo);
 			lblDiferencia.setFont(new Font("Arial", Font.ITALIC, 14));
@@ -81,7 +82,7 @@ public class ResumenWorkout extends JDialog {
 		int porcentaje = ejerciciosTotales > 0 ? (ejerciciosCompletados * 100 / ejerciciosTotales) : 0;
 
 		JLabel lblEjercicios = new JLabel(
-			    String.format("Ejercicios: %d/%d (%d%%)", ejerciciosCompletados, ejerciciosTotales, porcentaje));
+				String.format("Ejercicios: %d/%d (%d%%)", ejerciciosCompletados, ejerciciosTotales, porcentaje));
 
 		lblEjercicios.setFont(new Font("Arial", Font.PLAIN, 16));
 		lblEjercicios.setForeground(Color.WHITE);
@@ -131,7 +132,7 @@ public class ResumenWorkout extends JDialog {
 				"Adivina que me encontrado en este ejercicio, el chocobollo",
 				"Metodo pomodoro 50 minutos con el movil y 10 de ejercicio",
 				"Giro 2 de mana azul, te tiro counterspell", "Balatro Balatrez", "¿Has bebido awita hoy?",
-				"WOP WOP WOP" };
+				"WOP WOP WOP", "Esto podría haber sido un sonic girando", "Kachaw", };
 		return mensajes[(int) (Math.random() * mensajes.length)];
 	}
 }

@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
@@ -38,6 +39,7 @@ public class EjercicioPanel extends JPanel {
 	private JLabel lblTiempoSerie;
 	private JTextArea txtDescanso;
 	private JButton btnSerie1, btnSerie2, btnSerie3;
+	private JProgressBar progressSerie1, progressSerie2, progressSerie3;
 	private JButton btnControl, btnSalir;
 	private CronometroThread cronometroTotal;
 	private CronometroThread cronometroSerie;

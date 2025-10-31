@@ -1,6 +1,8 @@
 package modelo;
 
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
+
 import java.awt.Color;
 
 import vista.EjercicioPanel;
@@ -15,6 +17,8 @@ public class CronometroThread implements Runnable {
 	private volatile boolean pausado;
 	private boolean ascendente;
 	private EjercicioPanel panel;
+	private JProgressBar progressBar;
+	private int tiempoTotal;
 
 	public CronometroThread(JLabel label, int segundosInicial, boolean ascendente) {
 		this.label = label;
@@ -22,6 +26,9 @@ public class CronometroThread implements Runnable {
 		this.ascendente = ascendente;
 		this.running = true;
 		this.pausado = false;
+		this.progressBar = null;
+		this.tiempoTotal = segundosInicial;
+
 	}
 
 	public void setPanel(EjercicioPanel panel) {
@@ -91,6 +98,23 @@ public class CronometroThread implements Runnable {
 			label.setForeground(Color.RED);
 		} else {
 			label.setForeground(Color.WHITE);
+		}
+	}
+
+	private void actualizarProgressBar() {
+		if (progressBar != null && !ascendente) {
+			int valorActual = segundos;
+			progressBar.setValue(valorActual);
+
+			int porcentaje = (int) valorActual / tiempoTotal;
+
+			if (porcentaje <= 0.2) {
+				progressBar.setForeground(Color.RED);
+			} else if (porcentaje <= 0.5) {
+				progressBar.setForeground(Color.ORANGE);
+			} else {
+				progressBar.setForeground(new Color(70, 130, 180));
+			}
 		}
 	}
 
