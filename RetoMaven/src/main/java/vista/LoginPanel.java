@@ -42,8 +42,10 @@ public class LoginPanel extends JPanel {
 		add(logoLabel);
 
 		// Etiqueta de título
-		titleLabel = new JLabel("<html><b>Log in to your SpinningCat<br>account</b></html>");
+		titleLabel = new JLabel("<html><b>Inicia Sesión con tu cuenta de SpinningCat</b></html>");
 		titleLabel.setForeground(Color.WHITE);
+		titleLabel.setBackground(new Color(0, 0, 0, 100)); // Negro con transparencia
+		titleLabel.setOpaque(true);
 		titleLabel.setFont(new Font("Roboto", Font.BOLD, 20));
 		titleLabel.setBounds(35, 30, 300, 60);
 		add(titleLabel);
@@ -92,6 +94,11 @@ public class LoginPanel extends JPanel {
 		registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		add(registerButton);
 		registerButton.addActionListener(e -> {
+			if(!ConexionControlador.getInstance().comprobarConexion()) { // si no hay conexión
+				JOptionPane.showMessageDialog(frame, "Has encontrado una función premium. \nPara continuar con la edición de datos en modo offline, suscribete al plan premium por 2,99€/mes.", "Funcionalidad Premium",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			frame.setContentPane(new RegistroPanel(frame));
 			frame.validate();
 		});

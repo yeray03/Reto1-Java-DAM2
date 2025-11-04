@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
 import controlador.ConexionControlador;
@@ -236,18 +237,21 @@ public class EjercicioPanel extends JPanel {
 	}
 
 	public void alFinalizarSerie() {
-		ArrayList<Serie> series = ejercicioActual.getSeries();
-		Serie serieActual = series.get(indiceSerieActual);
+		SwingUtilities.invokeLater(() -> { // Solucion al frezeo al finalizar serie
+			ArrayList<Serie> series = ejercicioActual.getSeries();
+			Serie serieActual = series.get(indiceSerieActual);
 
-		marcarSerieComoCompletada(indiceSerieActual);
-		indiceSerieActual++;
+			marcarSerieComoCompletada(indiceSerieActual);
+			indiceSerieActual++;
 
-		if (indiceSerieActual < series.size()) {
-			iniciarDescanso(serieActual.getTiempoDescanso());
-		} else {
-			ejercicioCompletado = true;
-			actualizarBotonControl();
-		}
+			if (indiceSerieActual < series.size()) {
+				iniciarDescanso(serieActual.getTiempoDescanso());
+			} else {
+				ejercicioCompletado = true;
+				actualizarBotonControl();
+				cronometroTotal.pausar();
+			}
+		});
 	}
 
 	private void iniciarDescanso(int tiempoDescanso) {
@@ -291,7 +295,6 @@ public class EjercicioPanel extends JPanel {
 
 	private void siguienteEjercicio() {
 		indiceEjercicioActual++;
-
 		if (indiceEjercicioActual >= workout.getEjercicios().size()) {
 			int tiempoTotal = 0;
 			if (cronometroTotal != null) {
@@ -312,11 +315,22 @@ public class EjercicioPanel extends JPanel {
 		lblTiempoSerie.setText("Serie: --:--");
 
 		cargarSeriesDelEjercicio();
+
+		// Reanudar el cronómetro total
+		if (cronometroTotal != null) {
+			cronometroTotal.reanudar();
+		}
+
+		// Cambiar estado a no pausado
+		enPausa = false;
+
 		iniciarSiguienteSerie();
 	}
 
-	public void alFinalizarDescanso() {
-		iniciarSiguienteSerie();
+	public void alFinalizarDescanso() { // solucion al frezeo al finalizar descanso
+		SwingUtilities.invokeLater(() -> {
+			iniciarSiguienteSerie();
+		});
 	}
 
 	private void cargarSeriesDelEjercicio() {

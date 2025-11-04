@@ -28,7 +28,6 @@ public class CronometroThread implements Runnable {
 		this.pausado = false;
 		this.progressBar = null;
 		this.tiempoTotal = segundosInicial;
-
 	}
 
 	public void setPanel(EjercicioPanel panel) {

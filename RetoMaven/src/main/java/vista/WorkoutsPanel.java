@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -86,6 +88,13 @@ public class WorkoutsPanel extends JPanel {
 			workouts = WorkoutControlador.getInstanceControlador().getWorkoutsHastaNivel(usuario.getNivel());
 		} else { // cargar desde fichero de backup
 			workouts = GestorFicheros.getInstance().leerWorkoutsHastaNivel(usuario.getNivel());
+			// ordenar workouts por nivel
+			Collections.sort(workouts, new Comparator<Workout>() {
+				@Override
+				public int compare(Workout w1, Workout w2) {
+					return Integer.compare(w1.getNivel(), w2.getNivel());
+				}
+			});
 		}
 
 		// Crear el modelo de la tabla

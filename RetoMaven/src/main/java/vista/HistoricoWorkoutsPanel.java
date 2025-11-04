@@ -2,6 +2,7 @@ package vista;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,12 +47,18 @@ public class HistoricoWorkoutsPanel extends JPanel {
 		lblPerfil.setBounds(579, 11, 36, 36);
 		add(lblPerfil);
 
+		
 		Boolean conexion = ConexionControlador.getInstance().comprobarConexion();
+		// Obtener los historicos del usuario
 		if (conexion) {
 			HistoricoControlador controlador = HistoricoControlador.getInstance();
 			historicos = controlador.getHistoricoUsuario(usuario);
-		}else {
+			// Ordenar los historicos por fecha descendente
+			Collections.sort(historicos, (h1, h2) -> h2.getFecha().compareTo(h1.getFecha()));
+		} else {
 			historicos = HistoricoControlador.getHistoricoOffline(usuario);
+			// Ordenar los historicos por fecha descendente
+			Collections.sort(historicos, (h1, h2) -> h2.getFecha().compareTo(h1.getFecha()));
 		}
 
 		// Crear el modelo de la tabla

@@ -8,7 +8,7 @@ public class Workout implements Serializable {
 	private ArrayList<Ejercicio> ejercicios;
 	private String nombre;
 	private int nivel;
-	private int numEjercicios;
+	private int numEjercicio;
 	private String videoUrl;
 
 	public ArrayList<Ejercicio> getEjercicios() {
@@ -36,11 +36,11 @@ public class Workout implements Serializable {
 	}
 
 	public int getNumEjercicios() {
-		return numEjercicios;
+		return numEjercicio;
 	}
 
 	public void setNumEjercicios(int numeroEjercicios) {
-		this.numEjercicios = numeroEjercicios;
+		this.numEjercicio = numeroEjercicios;
 	}
 
 	public String getVideoUrl() {
@@ -54,7 +54,7 @@ public class Workout implements Serializable {
 	@Override
 	public String toString() {
 		return "Workout [ejercicios=" + ejercicios + ", nombre=" + nombre + ", nivel=" + nivel + ", numEjercicios="
-				+ numEjercicios + ", videoUrl=" + videoUrl + "]";
+				+ numEjercicio + ", videoUrl=" + videoUrl + "]";
 	}
 
 }

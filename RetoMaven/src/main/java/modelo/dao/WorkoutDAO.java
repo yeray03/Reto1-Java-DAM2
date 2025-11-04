@@ -81,7 +81,7 @@ public class WorkoutDAO extends FirebaseInitialize {
 
 			String nombre = document.getString("nombre");
 			Long nivelLong = document.getLong("nivel");
-			Long numEjerciciosLong = document.getLong("numEjercicios");
+			Long numEjerciciosLong = document.getLong("numEjercicio");
 			String videoUrl = document.getString("videoUrl");
 
 			workout.setNombre(nombre != null ? nombre : "");
