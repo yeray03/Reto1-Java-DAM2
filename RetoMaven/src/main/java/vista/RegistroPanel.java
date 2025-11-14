@@ -108,6 +108,7 @@ public class RegistroPanel extends JPanel {
 		// Acción botón registro
 		registerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String nickname = txtNick.getText().trim();
 				String nombre = nameField.getText().trim();
 				String apellidos = surnameField.getText().trim();
 				String email = emailField.getText().trim();
@@ -126,6 +127,7 @@ public class RegistroPanel extends JPanel {
 				}
 
 				Usuario usuario = new Usuario();
+				usuario.setNickname(nickname);
 				usuario.setNombre(nombre);
 				usuario.setApellidos(apellidos);
 				usuario.setEmail(email);

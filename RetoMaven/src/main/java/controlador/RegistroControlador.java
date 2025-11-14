@@ -43,7 +43,7 @@ public class RegistroControlador {
 			UsuarioControlador usuarioControlador = UsuarioControlador.getInstance();
 			ArrayList<Usuario> usuarios = usuarioControlador.obtenerTodosUsuarios();
 			for (Usuario u : usuarios) {
-				if (u.getEmail().equalsIgnoreCase(usuario.getEmail().trim())) {
+				if (u.getNickname().equalsIgnoreCase(usuario.getNickname().trim())) {
 					return "El email ya estaba registrado.";
 				}
 			}
